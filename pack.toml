@@ -1,0 +1,13 @@
+[custom.all.to-mock-a-mockingbird]
+type = "local"
+path = "."
+ipkg = "to-mock-a-mockingbird.ipkg"
+test = "test/test.ipkg"
+
+[custom.all.to-mock-a-mockingbird-test]
+type = "local"
+path = "test"
+ipkg = "test.ipkg"
+
+[idris2]
+repl.rlwrap = true
