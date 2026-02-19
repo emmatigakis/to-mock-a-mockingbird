@@ -89,4 +89,75 @@ parameters {b : Type} {auto _ : Bird b}
                 eq2 = prf2 x
             in %search)
     
+    data Compatible : b -> b -> Type where
+        MkCompatible : (x : b) -> (y : b) -> (xA <*> x = y) -> (xB <*> y = x) -> Compatible xA xB
+    
+    question6 : Condition1 -> Condition2 -> (xA : b) -> (xB : b) -> Compatible xA xB
+    question6 c1 c2 xA xB = 
+        let (xC**prf) = c1 xA xB
+            (y**eq1) = question1 c1 c2 xC
+            eq2 = prf y
+        in MkCompatible (xB <*> y) y %search Refl
+    --Cy = A(By)    eq2
+    --Cy = y        eq1
+    --x = By
+
+    Happy : b -> Type 
+    Happy xA = Compatible xA xA 
+
+    question7 : (xA : b) -> (x : b) -> (Fond xA x) -> Happy xA
+    question7 xA x prf = 
+        MkCompatible x x prf prf
+    --Ax = x
+    
+    data Normal : b -> Type where
+        IsNormal : (x : b) -> (Fond xA x) -> Normal xA
+
+    question8 : {xH : b} -> Condition1 -> Happy xH -> (xB ** Normal xB)
+    question8 c1 (MkCompatible x y eq1 eq2) = 
+        let (xB**prf) = c1 xH xH
+            eq3 = prf y
+        in (xB ** IsNormal y (rewrite eq3 in rewrite eq2 in eq1))
+    --Hx = y    eq1
+    --Hy = x    eq2
+    --H(Hy) = y
+    --By = H(Hy)    eq3 
+
+    Fixated : b -> b -> Type 
+    Fixated xA xB = (x : b) -> xA <*> x = xB
+
+    HopelesslyEgocentric : b -> Type 
+    HopelesslyEgocentric xB = Fixated xB xB
+
+    Kestrel : b -> Type  
+    Kestrel xK = (x : b) -> (y : b) -> (xK <*> x) <*> y = x
+
+    question9 : Condition1 -> Condition2 -> {xK : b} -> Kestrel xK -> (xA ** HopelesslyEgocentric xA)
+    question9 c1 c2 kestrel = 
+        let (xA**eq1) = question1 c1 c2 xK
+        in (xA ** \x => let eq2 = kestrel xA x in rewrite sym eq1 in %search)
+    --KA = A        eq1 
+    --(KA)x = Ax
+    --(KA)x = A     eq2 
+
+    question10 : {y : b} -> Fixated x y -> Fond x y
+    question10 f = f y
+    
+
+    question12 : {xK : b} -> {x : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
+    question12 kestrel x eq1 = 
+        let eq2 = kestrel x (xK <*> x)
+        in %search
+    --(Kx)(Kx) = Kx eq1
+    --(Kx)(Kx) = x  eq2
+
+    question13 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> xA <*> x = xA <*> y
+    question13 prf x y = 
+        let eq1 = prf x
+            eq2 = prf y
+        in %search
+    
+    question14 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> (xA <*> x) <*> y = xA
+    question14 prf x y = 
+        rewrite prf x in prf y
     
