@@ -161,3 +161,33 @@ parameters {b : Type} {auto _ : Bird b}
     question14 prf x y = 
         rewrite prf x in prf y
     
+    question15 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> HopelesslyEgocentric (xA <*> x)
+    question15 prf x y = 
+        let eq1 = question14 prf x y
+            eq2 = prf x
+        in %search
+    --(Ax)y = A eq1
+    --Ax = A
+    --(Ax)y = Ax
+
+    question16 : {xK : b} -> Kestrel xK -> (x : b) -> (y : b) -> xK <*> x = xK <*> y -> x = y
+    question16 kestrel x y eq1 = 
+        let eq2 = kestrel x xK
+            eq3 = kestrel y xK
+        in rewrite sym eq2 in rewrite sym eq3 in cong (<*> xK) eq1
+    --Kx = Ky  eq1
+    --(Kx)z = (Ky)z
+    --(Kx)z = x eq2 z=K
+    --(Ky)z = y eq3 z=K
+
+    question17 : {xA : b} -> Fixated xA x -> Fixated xA y -> x = y
+    question17 prf1 prf2 = 
+        let eq1 = prf1 xA
+            eq2 = prf2 xA
+        in %search
+    --Az = y
+    --Az = x
+
+    question18 : {xK : b} -> Kestrel xK -> (x : b) -> Fond xK (xK <*> x) -> Fond xK x
+    question18 kestrel x eq1 = question16 kestrel (xK <*> x) x eq1
+    --K(Kx) = Kx
