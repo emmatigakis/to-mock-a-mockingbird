@@ -143,6 +143,10 @@ parameters {b : Type} {auto _ : Bird b}
     question10 : {y : b} -> Fixated x y -> Fond x y
     question10 f = f y
     
+    question11 : {xK : b} ->  Kestrel xK -> Egocentric xK -> HopelesslyEgocentric xK
+    question11 kestrel ego z = 
+        let eq1 = kestrel xK z 
+        in rewrite sym ego in %search
 
     question12 : {xK : b} -> {x : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
     question12 kestrel x eq1 = 
@@ -191,3 +195,36 @@ parameters {b : Type} {auto _ : Bird b}
     question18 : {xK : b} -> Kestrel xK -> (x : b) -> Fond xK (xK <*> x) -> Fond xK x
     question18 kestrel x eq1 = question16 kestrel (xK <*> x) x eq1
     --K(Kx) = Kx
+
+    question19 : {xK : b} -> Kestrel xK -> Egocentric xK -> (x : b) -> x = xK
+    question19 kestrel ego x = 
+        let prf = question11 kestrel ego x
+        in question16 kestrel x xK %search
+        --Kx = K
+        --Ky = K
+        --Kx = Ky
+
+    Identity : b -> Type 
+    Identity xI = (x : b) -> xI <*> x = x
+
+    question20 : {xI : b} -> Identity xI -> Agreeable xI -> (x : b) -> (y ** Fond x y)
+    question20 prf1 prf2 x = 
+        let (y**eq1) = prf2 x
+            eq2 = prf1 y
+        in (y ** trans (sym eq1) eq2)
+    --xy = Iy = y
+
+    question21 : {xI : b} -> Identity xI -> ((x : b) -> (y ** Fond x y)) -> Agreeable xI
+    question21 prf1 prf2 x = 
+        let (y ** eq1) = prf2 x
+            eq2 = prf1 y
+        in (y ** %search)
+    --xy = y = Iy
+
+    question22a : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> (xB : b) -> Normal xb
+    question22a prf1 prf2 xB = ?tmp
+        -- let (MkCompatible {b=b} x y prf prf3) = prf2 xB xI in ?question22a_rhs_0
+    --Bx = y
+    --Iy = x
+    --y = x
+    --Bx = x
