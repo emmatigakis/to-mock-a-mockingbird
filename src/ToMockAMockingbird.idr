@@ -6,6 +6,9 @@ interface Bird b where
     ||| A <*> B is A's response to B
     (<*>) : b -> b -> b
 
+data Compatible : {b : _} -> Bird b => b -> b -> Type where
+    MkCompatible : {b : _} -> Bird b => {xA : b} -> {xB : b} -> (x : b) -> (y : b) -> (xA <*> x = y) -> (xB <*> y = x) -> Compatible {b=b} xA xB
+
 %hint 
 sym2 : (0 _ : x = y) -> y = x
 sym2 = sym
@@ -88,10 +91,7 @@ parameters {b : Type} {auto _ : Bird b}
             let eq1 = prf1 (xC <*> x)
                 eq2 = prf2 x
             in %search)
-    
-    data Compatible : b -> b -> Type where
-        MkCompatible : (x : b) -> (y : b) -> (xA <*> x = y) -> (xB <*> y = x) -> Compatible xA xB
-    
+        
     question6 : Condition1 -> Condition2 -> (xA : b) -> (xB : b) -> Compatible xA xB
     question6 c1 c2 xA xB = 
         let (xC**prf) = c1 xA xB
@@ -221,9 +221,11 @@ parameters {b : Type} {auto _ : Bird b}
         in (y ** %search)
     --xy = y = Iy
 
-    question22a : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> (xB : b) -> Normal xb
-    question22a prf1 prf2 xB = ?tmp
-        -- let (MkCompatible {b=b} x y prf prf3) = prf2 xB xI in ?question22a_rhs_0
+    question22a : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> (xB : b) -> Normal xB
+    question22a prf1 prf2 xB = --?tmp
+        let (MkCompatible x y eq1 eq2) = prf2 xB xI 
+            eq3 = prf1 y
+        in IsNormal x $ trans eq1 $ trans (sym eq3) eq2 
     --Bx = y
     --Iy = x
     --y = x
