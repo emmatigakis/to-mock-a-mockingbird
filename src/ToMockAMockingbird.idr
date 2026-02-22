@@ -38,7 +38,7 @@ parameters {b : Type} {auto _ : Bird b}
         let (xC**prf) = c1 xA m
             eq1 = prf xC
             eq2 = mock xC
-        in (m <*> xC ** %search)
+        in (m <*> xC ** sym $ trans eq2 eq1)
     --A(CC) = A(MC) 
     --CC = A(MC)    -> eq1
 
@@ -49,7 +49,7 @@ parameters {b : Type} {auto _ : Bird b}
     question2 c1 c2@(m**mock) = 
         let (xE**eq1) = question1 c1 c2 m
             eq2 = mock xE
-        in (xE ** %search)
+        in (xE ** trans (sym eq2) eq1)
     --ME = E    -> eq1
     --ME = EE   -> eq2
     
@@ -65,7 +65,7 @@ parameters {b : Type} {auto _ : Bird b}
         let (xH**prf) = c1 x xA
             (y**eq1) = aggreable xH
             eq2 = prf y
-        in (xA <*> y ** %search)
+        in (xA <*> y ** sym $ trans2 eq1 eq2)
     --Hy = x(Ay)    eq2
     --Ay = Hy       eq1
 
@@ -75,7 +75,7 @@ parameters {b : Type} {auto _ : Bird b}
             (x**eq1) = aggreable xE
             eq2 = prf x
             eq3 = comp x
-        in (xB <*> x ** %search)
+        in (xB <*> x ** trans (sym eq3) $ trans eq1 eq2)
     --Ex = D(Bx)    eq2
     --Cx = Ex       eq1
     --Cx = A(Bx)    eq3
@@ -90,14 +90,14 @@ parameters {b : Type} {auto _ : Bird b}
         in (xABC ** \x => 
             let eq1 = prf1 (xC <*> x)
                 eq2 = prf2 x
-            in %search)
+            in trans2 eq2 eq1)
         
     question6 : Condition1 -> Condition2 -> (xA : b) -> (xB : b) -> Compatible xA xB
     question6 c1 c2 xA xB = 
         let (xC**prf) = c1 xA xB
             (y**eq1) = question1 c1 c2 xC
             eq2 = prf y
-        in MkCompatible (xB <*> y) y %search Refl
+        in MkCompatible (xB <*> y) y (trans (sym eq2) eq1) Refl
     --Cy = A(By)    eq2
     --Cy = y        eq1
     --x = By
@@ -135,7 +135,7 @@ parameters {b : Type} {auto _ : Bird b}
     question9 : Condition1 -> Condition2 -> {xK : b} -> Kestrel xK -> (xA ** HopelesslyEgocentric xA)
     question9 c1 c2 kestrel = 
         let (xA**eq1) = question1 c1 c2 xK
-        in (xA ** \x => let eq2 = kestrel xA x in rewrite sym eq1 in %search)
+        in (xA ** \x => let eq2 = kestrel xA x in rewrite sym eq1 in sym $ trans eq1 $ sym eq2)
     --KA = A        eq1 
     --(KA)x = Ax
     --(KA)x = A     eq2 
@@ -146,12 +146,12 @@ parameters {b : Type} {auto _ : Bird b}
     question11 : {xK : b} ->  Kestrel xK -> Egocentric xK -> HopelesslyEgocentric xK
     question11 kestrel ego z = 
         let eq1 = kestrel xK z 
-        in rewrite sym ego in %search
+        in rewrite sym ego in sym $ trans ego $ sym2 eq1
 
     question12 : {xK : b} -> {x : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
     question12 kestrel x eq1 = 
         let eq2 = kestrel x (xK <*> x)
-        in %search
+        in trans (sym eq1) eq2
     --(Kx)(Kx) = Kx eq1
     --(Kx)(Kx) = x  eq2
 
@@ -159,7 +159,7 @@ parameters {b : Type} {auto _ : Bird b}
     question13 prf x y = 
         let eq1 = prf x
             eq2 = prf y
-        in %search
+        in sym $ trans eq2 $ sym eq1
     
     question14 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> (xA <*> x) <*> y = xA
     question14 prf x y = 
@@ -169,7 +169,7 @@ parameters {b : Type} {auto _ : Bird b}
     question15 prf x y = 
         let eq1 = question14 prf x y
             eq2 = prf x
-        in %search
+        in sym $ trans eq2 $ sym eq1
     --(Ax)y = A eq1
     --Ax = A
     --(Ax)y = Ax
@@ -188,7 +188,7 @@ parameters {b : Type} {auto _ : Bird b}
     question17 prf1 prf2 = 
         let eq1 = prf1 xA
             eq2 = prf2 xA
-        in %search
+        in trans (sym eq1) eq2
     --Az = y
     --Az = x
 
@@ -199,7 +199,7 @@ parameters {b : Type} {auto _ : Bird b}
     question19 : {xK : b} -> Kestrel xK -> Egocentric xK -> (x : b) -> x = xK
     question19 kestrel ego x = 
         let prf = question11 kestrel ego x
-        in question16 kestrel x xK %search
+        in question16 kestrel x xK $ sym $ trans ego $ sym prf
         --Kx = K
         --Ky = K
         --Kx = Ky
@@ -218,7 +218,7 @@ parameters {b : Type} {auto _ : Bird b}
     question21 prf1 prf2 x = 
         let (y ** eq1) = prf2 x
             eq2 = prf1 y
-        in (y ** %search)
+        in (y ** sym $ trans eq1 $ sym eq2)
     --xy = y = Iy
 
     question22a : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> (xB : b) -> Normal xB
