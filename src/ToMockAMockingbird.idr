@@ -9,14 +9,10 @@ interface Bird b where
 data Compatible : {b : _} -> Bird b => b -> b -> Type where
     MkCompatible : {b : _} -> Bird b => {xA : b} -> {xB : b} -> (x : b) -> (y : b) -> (xA <*> x = y) -> (xB <*> y = x) -> Compatible {b=b} xA xB
 
-%hint 
-sym2 : (0 _ : x = y) -> y = x
-sym2 = sym
-%hint 
-trans2 : (0 _ : a = b) -> (0 _ : b = c) -> a = c
-trans2 = trans
+data Normal : {auto b : _} -> Bird b => b -> Type where
+    IsNormal : {b : _} -> Bird b => {xA : b} -> (x : b) -> (xA <*> x = x) -> Normal xA
 
-parameters {b : Type} {auto _ : Bird b}
+parameters {auto b : Type} {auto _ : Bird b}
     Mockingbird : b -> Type
     Mockingbird m = (x : b) -> m <*> x = x <*> x
 
@@ -65,7 +61,7 @@ parameters {b : Type} {auto _ : Bird b}
         let (xH**prf) = c1 x xA
             (y**eq1) = aggreable xH
             eq2 = prf y
-        in (xA <*> y ** sym $ trans2 eq1 eq2)
+        in (xA <*> y ** sym $ trans eq1 eq2)
     --Hy = x(Ay)    eq2
     --Ay = Hy       eq1
 
@@ -90,7 +86,7 @@ parameters {b : Type} {auto _ : Bird b}
         in (xABC ** \x => 
             let eq1 = prf1 (xC <*> x)
                 eq2 = prf2 x
-            in trans2 eq2 eq1)
+            in trans eq2 eq1)
         
     question6 : Condition1 -> Condition2 -> (xA : b) -> (xB : b) -> Compatible xA xB
     question6 c1 c2 xA xB = 
@@ -110,9 +106,6 @@ parameters {b : Type} {auto _ : Bird b}
         MkCompatible x x prf prf
     --Ax = x
     
-    data Normal : b -> Type where
-        IsNormal : (x : b) -> (Fond xA x) -> Normal xA
-
     question8 : {xH : b} -> Condition1 -> Happy xH -> (xB ** Normal xB)
     question8 c1 (MkCompatible x y eq1 eq2) = 
         let (xB**prf) = c1 xH xH
@@ -146,7 +139,7 @@ parameters {b : Type} {auto _ : Bird b}
     question11 : {xK : b} ->  Kestrel xK -> Egocentric xK -> HopelesslyEgocentric xK
     question11 kestrel ego z = 
         let eq1 = kestrel xK z 
-        in rewrite sym ego in sym $ trans ego $ sym2 eq1
+        in rewrite sym ego in sym $ trans ego $ sym eq1
 
     question12 : {xK : b} -> {x : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
     question12 kestrel x eq1 = 
@@ -230,3 +223,58 @@ parameters {b : Type} {auto _ : Bird b}
     --Iy = x
     --y = x
     --Bx = x
+
+    question22b : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> Agreeable xI
+    question22b prf1 prf2 xB =
+        question21 prf1 (\x => let IsNormal y prf3 = question22a prf1 prf2 x in (y ** prf3)) xB
+
+    question23 : {xI : b} -> Identity xI -> HopelesslyEgocentric xI -> (x : b) -> x = xI
+    question23 prf1 prf2 x = 
+        let eq1 = prf1 x
+            eq2 = prf2 x
+        in trans (sym eq1) eq2
+    --Ix = I    eq2
+    --Ix = x    eq1 
+
+    Lark : b -> Type 
+    Lark xL = (x : b) -> (y : b) -> (xL <*> x) <*> y = x <*> (y <*> y)
+
+    question24 : {xL : b} -> {xI : b} -> Lark xL -> Identity xI -> (m ** Mockingbird m)
+    question24 lark ident = 
+        (xL <*> xI ** \x => 
+            let eq1 = ident (x <*> x)
+                eq2 = lark xI x
+            in trans eq2 eq1)
+    --(LI)x = I(xx) = xx
+
+    lark_lemma : {xL : b} -> Lark xL -> (x : b) -> Fond x ((xL <*> x)<*>(xL <*> x))
+    lark_lemma lark x = 
+        sym $ lark x (xL <*> x)
+        
+    question25 : {xL : b} -> Lark xL -> (x : b) -> Happy x
+    question25 lark x = 
+        question7 x ((xL <*> x)<*>(xL <*> x)) $ lark_lemma lark x
+    --(Lx)(Lx) = x((Lx)(Lx))
+
+    question26 : {xL : b} -> Lark xL -> HopelesslyEgocentric xL -> (x : b) -> Fond x xL
+    question26 lark ego x = 
+        let eq1 = question14 ego x (xL <*> x)
+            eq2 = lark_lemma lark x
+        in rewrite sym eq1 in eq2
+    --(Lx)y = L q14
+    --(Lx)(Lx) = L  eq1
+
+    question27 : ((x : b) -> Lark x -> Kestrel x -> Void) -> {xL : b} -> Lark xL -> (xK : b) -> Fond xL xK -> Not(Kestrel xK)
+    -- question27 cond lark xK eq1 kestrel = 
+    --     let eq2 = question18 kestrel xL
+    --         prf2 = question19
+    --     in cond xK (\x => \y => ?tmp1) (\x => \y => ?tmp2)
+        --(LK)K = KK
+        --(LK)K = K(KK)
+
+    question28 : {xK : b} -> Kestrel xK -> {xL : b} -> Lark xL -> Fond xK xL -> (x : b) -> Fond x xL
+    question28 kestrel lark fond  = 
+        question26 lark (\x => rewrite sym fond 
+            in let eq1 = kestrel xL x in 
+            rewrite eq1 in sym fond) 
+    
