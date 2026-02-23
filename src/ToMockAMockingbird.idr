@@ -265,12 +265,16 @@ parameters {auto b : Type} {auto _ : Bird b}
     --(Lx)(Lx) = L  eq1
 
     question27 : ((x : b) -> Lark x -> Kestrel x -> Void) -> {xL : b} -> Lark xL -> (xK : b) -> Fond xL xK -> Not(Kestrel xK)
-    -- question27 cond lark xK eq1 kestrel = 
-    --     let eq2 = question18 kestrel xL
-    --         prf2 = question19
-    --     in cond xK (\x => \y => ?tmp1) (\x => \y => ?tmp2)
-        --(LK)K = KK
-        --(LK)K = K(KK)
+    question27 cond lark xK eq1 kestrel = 
+        let eq2 = cong (<*> xK) eq1
+            eq3 = lark xK xK
+            eq4 = trans (sym eq3) eq2
+            eq5 = question18 kestrel xK eq4 
+            eq6 = question19 kestrel eq5 xL
+        in cond xL lark (\x => \y => rewrite eq6 in kestrel x y)
+        --LK = K        eq1
+        --(LK)K = KK    eq2
+        --(LK)K = K(KK) eq3
 
     question28 : {xK : b} -> Kestrel xK -> {xL : b} -> Lark xL -> Fond xK xL -> (x : b) -> Fond x xL
     question28 kestrel lark fond  = 
@@ -278,3 +282,21 @@ parameters {auto b : Type} {auto _ : Bird b}
             in let eq1 = kestrel xL x in 
             rewrite eq1 in sym fond) 
     
+
+    question29 : {xL : b} -> Lark xL -> (xE ** Egocentric xE)
+    question29 lark = 
+        let eq1 = lark_lemma lark (xL <*> xL)
+            --l_ll = xL <*> (xL <*> xL)
+            (l_ll**eq2) = the (l_ll ** l_ll = xL <*> (xL <*> xL)) (xL <*> (xL <*> xL) ** Refl)
+            (y**eq3) = the (y ** y = (l_ll <*> l_ll)) (l_ll <*> l_ll ** Refl)
+            eq4 = lark xL y
+            eq5 = the ((xL <*> xL) <*> y = y) (rewrite eq3 in sym $ rewrite eq3 in rewrite eq2 in sym eq1)
+            eq6 = trans (sym eq4) eq5
+            eq7 = cong (<*> y) eq6 
+            eq8 = lark (y <*> y) y
+        in (y<*>y ** trans (sym eq8) eq7)
+        --(LL)y = y         eq5 
+        --(LL)y = L(yy)     eq4 
+        --L(yy) = y         eq6 
+        --L(yy)y = yy       eq7
+        --L(yy)y = (yy)(yy) eq8
