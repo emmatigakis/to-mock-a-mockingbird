@@ -300,3 +300,9 @@ parameters {auto b : Type} {auto _ : Bird b}
         --L(yy) = y         eq6 
         --L(yy)y = yy       eq7
         --L(yy)y = (yy)(yy) eq8
+
+    %ambiguity_depth 5
+    question29b : {xL : b} -> Lark xL -> (xE ** Egocentric xE)
+    question29b lark = 
+        (((xL<*>((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))))<*>(xL<*>(xL<*>xL))) ** 
+        sym (trans (trans (trans (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL))) (cong2 (<*>) (lark (xL<*>xL) (xL<*>(xL<*>xL))) (lark (xL<*>xL) (xL<*>(xL<*>xL))))) (cong2 (<*>) (lark (xL) ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))) (sym (lark (xL<*>xL) (xL<*>(xL<*>xL)))))) (sym (trans (cong2 (<*>) (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL))) (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL)))) (sym (lark (((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))<*>((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))) ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))))))))
