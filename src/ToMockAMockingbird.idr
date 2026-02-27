@@ -8,8 +8,8 @@ interface Bird b where
     (<*>) : b -> b -> b
 
 public export
-data Compatible : {b : _} -> Bird b => b -> b -> Type where
-    MkCompatible : {b : _} -> Bird b => {xA : b} -> {xB : b} -> (x : b) -> (y : b) -> (xA <*> x = y) -> (xB <*> y = x) -> Compatible {b=b} xA xB
+data Compatible : {auto b : _} -> Bird b => b -> b -> Type where
+    MkCompatible : {b : _} -> Bird b => {xA : b} -> {xB : b} -> (x : b) -> (y : b) -> (xA <*> x = y) -> (xB <*> y = x) -> Compatible xA xB
 
 public export
 data Normal : {auto b : _} -> Bird b => b -> Type where
