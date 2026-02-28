@@ -185,3 +185,84 @@ parameters {auto b : Type} {auto _ : Bird b}
                     in trans eq2 eq1)
         --x(y1y2y3)(z1z2z3) = Ex(y1y2y3)z1z2z3
         --Ex(y1y2y3) = EExy1y2y3
+
+    Warbler : b -> Type 
+    Warbler xW = (x : b) -> (y : b) -> xW <*> x <*> y = x <*> y <*> y
+
+    question14 : {xW : b} -> Warbler xW -> {xI : b} -> Identity xI -> (m ** Mockingbird m)
+    question14 warbler ident = 
+        (xW <*> xI ** \x => 
+            let eq1 = warbler xI x
+                eq2 = cong (<*> x) $ ident x
+            in trans eq1 eq2)
+
+    question15 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
+    question15 warbler kestrel = 
+        (xW <*> xK ** \x => 
+            let eq1 = warbler xK x
+                eq2 = kestrel x x
+            in trans eq1 eq2)
+    
+
+    question13 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> (m ** Mockingbird m)
+    question13 warbler kestrel = 
+        let (xI ** ident) = question15 warbler kestrel
+        in question14 warbler ident
+    
+    Cardinal : b -> Type
+    Cardinal xC = (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = x <*> z <*> y
+
+    question16 : {xC : b} -> Cardinal xC -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
+    question16 cardinal kestrel = 
+        (xC <*> xK <*> xK ** \x => 
+            let eq1 = cardinal xK xK x
+                eq2 = kestrel x xK
+            in trans eq1 eq2)
+    
+    Thrush : b -> Type
+    Thrush xT = (x : b) -> (y : b) -> xT <*> x <*> y = y <*> x
+
+    question17 : {xC : b} -> Cardinal xC -> {xI : b} -> Identity xI -> (xT ** Thrush xT)
+    question17 cardinal ident = 
+        (xC <*> xI ** \x => \y => 
+            let eq1 = cardinal xI x y
+                eq2 = cong (<*> x) $ ident y
+            in trans eq1 eq2)
+
+    question18 : {xT : b} -> Thrush xT -> ((x :b) -> (y ** Fond x y)) -> (xA ** ((x : b) -> xA <*> x = x <*> xA))
+    question18 thrush prf = 
+        let (xA**eq1) = prf xT
+        in (xA ** \x => 
+            let eq2 = cong (<*> x) eq1
+                eq3 = thrush xA x
+            in trans (sym eq2) eq3)
+    --TA = A    eq1
+    --TAx = Ax  eq2
+    --TAx = xA  eq3
+
+    question19 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {m : b} -> Mockingbird m -> (xA ** ((x : b) -> xA <*> x = x <*> xA))
+    question19 bluebird thrush mock =  
+        question18 thrush (\x => 
+            let prf = question2 bluebird m mock x
+            in ((((xB <*> x) <*> m) <*> ((xB <*> x) <*> m)) ** prf))
+    
+    Robin : b -> Type 
+    Robin xR = (x : b) -> (y : b) -> (z : b) -> xR <*> x <*> y <*> z = y <*> z <*> x
+
+    question20 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {m : b} -> (xR ** Robin xR)
+    question20 bluebird thrush = 
+        let MkDove xD dove = question5 bluebird
+        in (xD <*> xT ** \x => \y => \z => 
+            let eq1 = dove xT x y z
+                eq2 = thrush x (y <*> z)
+            in trans eq1 eq2)
+    
+    question21 : {xR : b} -> Robin xR -> (xC ** Cardinal xC)
+    question21 robin = 
+        (xR <*> xR <*> xR ** 
+            \x => \y => \z => 
+                let eq1 = cong (<*> y <*> z) $ robin xR xR x
+                    eq2 = cong (<*> z) $ robin x xR y
+                in trans eq1 $ trans eq2 $ robin y x z)
+
+        
