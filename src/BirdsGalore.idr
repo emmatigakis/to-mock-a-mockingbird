@@ -257,12 +257,70 @@ parameters {auto b : Type} {auto _ : Bird b}
                 eq2 = thrush x (y <*> z)
             in trans eq1 eq2)
     
+    question21' : {xR : b} -> Robin xR -> Cardinal (xR <*> xR <*> xR)
+    question21' robin x y z = 
+        let eq1 = cong (<*> y <*> z) $ robin xR xR x
+            eq2 = cong (<*> z) $ robin x xR y
+        in trans eq1 $ trans eq2 $ robin y x z
+
     question21 : {xR : b} -> Robin xR -> (xC ** Cardinal xC)
     question21 robin = 
         (xR <*> xR <*> xR ** 
-            \x => \y => \z => 
-                let eq1 = cong (<*> y <*> z) $ robin xR xR x
-                    eq2 = cong (<*> z) $ robin x xR y
-                in trans eq1 $ trans eq2 $ robin y x z)
+            question21' robin)
 
-        
+    question22a : {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> xC <*> x = xR <*> x <*> xR
+    question22a robin cardinal x = 
+        let eq1 = question22a' x
+            eq2 = robin xR xR x
+        in trans eq1 eq2
+    where 
+        question22a' : (x : b) -> xC <*> x = xR <*> xR <*> xR <*> x
+        question22a' x = 
+            let prf = question21' robin
+                prf2 = \x => \y => \z => trans (cardinal x y z) (sym $ prf x y z)
+                eq1 = prf2 x x x
+            in ?question22a'_rhs
+    --Cx = RRRx = RxR
+
+    question22b : {xB : b} -> Bluebird xB -> {xR : b} -> {xT : b} -> Thrush xT -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> xC <*> x = xB <*> (xT <*> x) <*> xR
+
+    question23 : {xC : b} -> Cardinal xC -> (xR ** Robin xR)
+    question23 cardinal = 
+        (xC <*> xC ** 
+            \x => \y => \z => 
+                let eq1 = cardinal xC x y
+                    eq2 = cong (<*> z) eq1
+                    eq3 = cardinal y x z
+                in trans eq2 eq3)
+        --CCxy = CYx        eq1
+        --CCxyz = Cyxz = yzx
+    
+    Finch : b -> Type 
+    Finch xF = (x : b) -> (y : b) -> (z : b) -> xF <*> x <*> y <*> z = z <*> y <*> x
+
+    question24 : {xB : b} -> Bluebird xB -> {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (xF ** Finch xF)
+    question24 bluebird robin cardinal = 
+        (xB <*> xC <*> xR ** 
+            \x => \y => \z => 
+                let eq1 = robin x z y
+                    eq2 = cardinal (xR <*> x) y z
+                    eq3 = cong (<*> y <*> z) $ bluebird xC xR x
+                in trans eq3 $ trans eq2 eq1)
+    --zyx = Rxzy = (Rx)zy = C(Rx)yz = BCRxyz
+
+    question25 : {xT : b} -> Thrush xT ->  Eagle -> (xF ** Finch xF)
+    question25 thrush (MkEagle xE eagle) = 
+        (xE <*> xT <*> xT <*> xE <*> xT ** 
+            \x => \y => \z => 
+                let eq1 = thrush x (z <*> y)
+                    eq2 = cong ((xT <*> x) <*>) $ thrush y z
+                    eq3 = eagle xT x xT y z
+                    eq4 = cong (<*> y <*> z) $ thrush xT (xE <*> xT <*> x)
+                    eq5 = cong (<*> y <*> z) $ eagle xT xT xE xT x
+                in trans eq5 $ trans eq4 $ trans eq3 $ trans eq2 eq1)
+    --zyx = Tx(zy) = Tx(Tyz) = ETxTyz = (ETx)Tyz = TT(ETx)yz 
+    --(ETx)T = TT(ETx)      
+    --TT(ETx) = ETTETx
+    --TT(ETx)yz = ETTETxyz
+
+    
