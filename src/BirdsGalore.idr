@@ -268,21 +268,27 @@ parameters {auto b : Type} {auto _ : Bird b}
         (xR <*> xR <*> xR ** 
             question21' robin)
 
-    question22a : {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> xC <*> x = xR <*> x <*> xR
-    question22a robin cardinal x = 
-        let eq1 = question22a' x
-            eq2 = robin xR xR x
-        in trans eq1 eq2
-    where 
-        question22a' : (x : b) -> xC <*> x = xR <*> xR <*> xR <*> x
-        question22a' x = 
-            let prf = question21' robin
-                prf2 = \x => \y => \z => trans (cardinal x y z) (sym $ prf x y z)
-                eq1 = prf2 x x x
-            in ?question22a'_rhs
+    question22a : {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = xR <*> x <*> xR <*> y <*> z 
+    question22a robin cardinal x y z = 
+        let eq1 = cong (<*> z) $ robin x xR y
+            eq2 = robin y x z
+            eq3 = cardinal x y z
+        in sym $ trans eq1 $ trans eq2 $ sym eq3
     --Cx = RRRx = RxR
 
-    question22b : {xB : b} -> Bluebird xB -> {xR : b} -> {xT : b} -> Thrush xT -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> xC <*> x = xB <*> (xT <*> x) <*> xR
+    question22b : 
+        {xB : b} -> Bluebird xB -> 
+        {xR : b} -> Robin xR ->
+        {xT : b} -> Thrush xT ->  
+        {xC : b} -> Cardinal xC -> 
+        (x : b) -> (y : b) -> (z : b) ->
+        xC <*> x <*> y <*> z = xB <*> (xT <*> x) <*> xR <*> y <*> z
+    question22b bluebird robin thrush cardinal x y z = 
+        let eq1 = cong (<*> z) $ bluebird (xT <*> x) xR y
+            eq2 = cong (<*> z) $ thrush x (xR <*> y)
+            eq3 = robin y x z
+            eq4 = cardinal x y z
+        in sym $ trans eq1 $ trans eq2 $ trans eq3 $ sym eq4
 
     question23 : {xC : b} -> Cardinal xC -> (xR ** Robin xR)
     question23 cardinal = 
@@ -417,4 +423,54 @@ parameters {auto b : Type} {auto _ : Bird b}
                 let eq1 = cong (<*> w) $ cardinalOnceRemoved xFstar x y z
                     eq2 = finchOnceRemoved x z y w
                 in trans eq1 eq2)
+    
+    CardinalTwiceRemoved : b -> Type 
+    CardinalTwiceRemoved xCdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xCdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z1 <*> z3 <*> z2
+    RobinTwiceRemoved : b -> Type 
+    RobinTwiceRemoved xRdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xRdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z2 <*> z3 <*> z1
+    FinchTwiceRemoved : b -> Type 
+    FinchTwiceRemoved xFdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xFdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z3 <*> z2 <*> z1
+    VireoTwiceRemoved : b -> Type 
+    VireoTwiceRemoved xVdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xVdstar <*> x <*> y <*>z1 <*> z2 <*> z3 = x <*> y <*> z3 <*> z1 <*> z2
+
+    question35a : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xCdstar ** CardinalTwiceRemoved xCdstar)
+    question35a bluebird cardinal = 
+        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
+        in (xB<*>xCstar ** 
+            \x => \y => \z1 => \z2 => \z3 => 
+                let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xCstar x y
+                    eq2 = cardinalOnceRemoved (x <*> y) z1 z2 z3
+                in trans eq1 eq2)
+    --BC*
+
+    question35b : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xRdstar ** RobinTwiceRemoved xRdstar)
+    question35b bluebird cardinal =     
+        let (xRstar**robinOnceRemoved) = question32 bluebird cardinal
+        in (xB<*>xRstar ** 
+            \x => \y => \z1 => \z2 => \z3 => 
+                let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xRstar x y
+                    eq2 = robinOnceRemoved (x <*> y) z1 z2 z3
+                in trans eq1 eq2)
+    --BR*
+
+    question35c : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xFdstar ** FinchTwiceRemoved xFdstar)
+    question35c bluebird cardinal =     
+        let (xFstar**finchOnceRemoved) = question33 bluebird cardinal
+        in (xB<*>xFstar ** 
+            \x => \y => \z1 => \z2 => \z3 => 
+                let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xFstar x y
+                    eq2 = finchOnceRemoved (x <*> y) z1 z2 z3
+                in trans eq1 eq2)
+    --BF*
+
+    question35d : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xVdstar ** VireoTwiceRemoved xVdstar)
+    question35d bluebird cardinal =     
+        let (xVstar**vireoOnceRemoved) = question34 bluebird cardinal
+        in (xB<*>xVstar ** 
+            \x => \y => \z1 => \z2 => \z3 => 
+                let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xVstar x y
+                    eq2 = vireoOnceRemoved (x <*> y) z1 z2 z3
+                in trans eq1 eq2)
+    --BV*
+
     
