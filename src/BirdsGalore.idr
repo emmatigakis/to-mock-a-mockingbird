@@ -473,4 +473,143 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --BV*
 
+    question36 : {xCstar : b} -> CardinalOnceRemoved xCstar -> {xT : b} -> Thrush xT -> (xV ** Vireo xV)
+    question36 cardinalOnceRemoved thrush = 
+        (xCstar<*>xT ** 
+            \x => \y => \z => 
+                let eq1 = cardinalOnceRemoved xT x y z
+                    eq2 = cong (<*> y) $ thrush x z
+                in trans eq1 eq2)
+    --C*Txyz = Txzy = zxy
+
+    QueerBird : b -> Type
+    QueerBird xQ = (x : b) -> (y : b) -> (z : b) -> xQ <*> x <*> y <*> z = y <*> (x <*> z)
+
+    question37 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ ** QueerBird xQ)
+    question37 bluebird cardinal = 
+        (xC <*> xB ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> z) $ cardinal xB x y
+                    eq2 = bluebird y x z
+                in trans eq1 eq2)    
+    --y(xz) = Byxz = CBxyz
+
+    QuixoticBird : b -> Type 
+    QuixoticBird xQ1 = (x : b) -> (y : b) -> (z : b) -> xQ1 <*> x <*> y <*> z = x <*> (z <*> y)
+
+    question38 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ1 ** QuixoticBird xQ1)
+    question38 bluebird cardinal = 
+        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
+        in (xCstar<*>xB ** 
+            \x => \y => \z =>   
+                let eq1 = cardinalOnceRemoved xB x y z
+                    eq2 = bluebird x z y
+                in trans eq1 eq2)
+    --x(zy) = Bxzy = C*Bxyz
+
+    QuizzicalBird : b -> Type 
+    QuizzicalBird xQ2 = (x : b) -> (y : b) -> (z : b) -> xQ2 <*> x <*> y <*> z = y <*> (z <*> x)
+
+    question39 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ2 ** QuizzicalBird xQ2)
+    question39 bluebird cardinal = 
+        let (xRstar**robinOnceRemoved) = question32 bluebird cardinal
+        in (xRstar<*>xB ** 
+            \x => \y => \z =>   
+                let eq1 = robinOnceRemoved xB x y z
+                    eq2 = bluebird y z x
+                in trans eq1 eq2)
+    
+    question40a : {xC : b} -> Cardinal xC -> {xQ1 : b} -> QuixoticBird xQ1 ->  (xQ2 ** QuizzicalBird xQ2)
+    question40a cardinal quixotic = 
+        (xC<*>xQ1 ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> z) $ cardinal xQ1 x y
+                    eq2 = quixotic y x z
+                in trans eq1 eq2)
+    
+    question40b : {xC : b} -> Cardinal xC -> {xQ2 : b} -> QuizzicalBird xQ2 ->  (xQ1 ** QuixoticBird xQ1)
+    question40b cardinal quizzical = 
+        (xC<*>xQ2 ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> z) $ cardinal xQ2 x y
+                    eq2 = quizzical y x z
+                in trans eq1 eq2)
+
+    QuirkyBird : b -> Type 
+    QuirkyBird xQ3 = (x : b) -> (y : b) -> (z : b) -> xQ3 <*> x <*> y <*> z = z <*> (x <*> y)
+
+    question41 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xQ3 ** QuirkyBird xQ3)
+    question41 bluebird thrush = 
+        (xB <*> xT ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> z) $ bluebird xT x y
+                    eq2 = thrush (x <*> y) z
+                in trans eq1 eq2)
+    
+    QuackyBird : b -> Type 
+    QuackyBird xQ4 = (x : b) -> (y : b) -> (z : b) -> xQ4 <*> x <*> y <*> z = z <*> (y <*> x)
+
+    question42 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ4 ** QuackyBird xQ4)
+    question42 bluebird cardinal = 
+        let (xFstar**finchOnceRemoved) = question33 bluebird cardinal
+        in (xFstar<*>xB ** 
+            \x => \y => \z =>   
+                let eq1 = finchOnceRemoved xB x y z
+                    eq2 = bluebird z y x
+                in trans eq1 eq2)
+
+
+    question43a : {xC : b} -> Cardinal xC -> {xQ3: b} -> QuirkyBird xQ3 ->  (xQ4 ** QuackyBird xQ4)
+    question43a cardinal quirky = 
+        (xC<*>xQ3 ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> z) $ cardinal xQ3 x y
+                    eq2 = quirky y x z
+                in trans eq1 eq2)
+    
+    question43b : {xC : b} -> Cardinal xC -> {xQ4 : b} -> QuackyBird xQ4 ->  (xQ3 ** QuirkyBird xQ3)
+    question43b cardinal quacky = 
+        (xC<*>xQ4 ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> z) $ cardinal xQ4 x y
+                    eq2 = quacky y x z
+                in trans eq1 eq2)
+
+    question44 : {xT : b} -> Thrush xT -> {xQ1 : b} -> QuixoticBird xQ1 -> QuackyBird (xQ1 <*> xT)
+    question44 thrush quixotic x y z = 
+        let eq1 = cong (<*> z) $ quixotic xT x y
+            eq2 = thrush (y <*> x) z
+        in trans eq1 eq2
+
+    question45 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> (xB ** Bluebird xB)
+    question45 thrush queer = 
+        (xQ <*> xT <*> (xQ <*> xQ) ** 
+            \x => \y => \z =>   
+                let eq1 = cong (<*> y <*> z) $ queer xT (xQ <*> xQ) x
+                    eq2 = cong (<*> z) $ queer xQ (xT <*> x) y
+                    eq3 = cong (<*> z) $ thrush x (xQ <*> y)
+                    eq4 = queer y x z
+                in trans eq1 $ trans eq2 $ trans eq3 eq4)
+    
+    question46 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> (xC ** Cardinal xC)
+    question46 thrush queer = 
+        (xQ <*> xQ <*> (xQ <*> xT) ** 
+            \x => \y => \z =>  
+                let eq1 = cong (<*> y <*> z) $ queer xQ (xQ <*> xT) x
+                    eq2 = cong (<*> z) $ queer xT (xQ <*> x) y
+                    eq3 = queer x (xT <*> y) z
+                    eq4 = thrush y (x <*> z)
+                in trans eq1 $ trans eq2 $ trans eq3 eq4)
+    
+    Goldfinch : b -> Type 
+    Goldfinch xG = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xG <*> x <*> y <*> z <*> w = x <*> w <*> (y <*> z)
+
+    question47 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xG ** Goldfinch xG)
+    question47 bluebird cardinal = 
+        (xB<*>xB<*>xC ** 
+            \x => \y => \z => \w => 
+                let eq1 = cong (<*> y <*> z <*> w) $ bluebird xB xC x
+                    eq2 = cong (<*> w) $ bluebird (xC <*> x) y z
+                    eq3 = cardinal x (y <*> z) w
+                in trans eq1 $ trans eq2 eq3)
     
