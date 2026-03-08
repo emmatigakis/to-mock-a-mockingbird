@@ -5,49 +5,61 @@ import ToMockAMockingbird
 %default total 
 
 %ambiguity_depth 8
+public export
 data Dove : {auto b : _} -> Bird b => Type where 
     MkDove : {b : _} -> Bird b => (xD : b) -> ((x : b) -> (y : b) -> (z : b) -> (w : b) -> xD <*> x <*> y <*> z <*> w = x <*> y <*> (z <*> w)) -> Dove
 
+public export
 data Blackbird : {auto b : _} -> Bird b => Type where
     MkBlackbird : {b : _} -> Bird b => (xB1 :b) -> ((x :b ) -> (y : b) -> (z : b) -> (w : b) -> xB1 <*> x <*> y <*> z <*> w = x <*> (y <*> z <*> w)) -> Blackbird
 
+public export
 data Eagle : {auto b : _} -> Bird b => Type where
     MkEagle : {b : _} -> Bird b => (xE : b) -> ((x :b ) -> (y : b) -> (z : b) -> (w : b) -> (v : b) -> xE <*> x <*> y <*> z <*> w <*> v = x <*> y <*> (z <*> w <*> v)) -> Eagle
 
+public export
 data Bunting : {auto b : _} -> Bird b => Type where
     MkBunting : {b : _} -> Bird b => (xB2 : b) -> ((x :b ) -> (y : b) -> (z : b) -> (w : b) -> (v : b) -> xB2 <*> x <*> y <*> z <*> w <*> v = x <*> (y <*> z <*> w <*> v)) -> Bunting
 
+public export
 data Dickcissel : {auto b : _} -> Bird b => Type where
     MkDickcissel : {b : _} -> Bird b => (xD1 : b) -> 
         ((x :b ) -> (y : b) -> (z : b) -> (w : b) -> (v : b) -> xD1 <*> x <*> y <*> z <*> w <*> v = x <*> y <*> z <*> (w <*> v)) 
         -> Dickcissel
 
+public export
 data Becard : {auto b : _} -> Bird b => Type where
     MkBecard : {b : _} -> Bird b => (xB3 : b) -> ((x :b ) -> (y : b) -> (z : b) -> (w : b) -> xB3 <*> x <*> y <*> z <*> w = x <*> (y <*>(z <*> w))) -> Becard
 
+public export
 data Dovekie : {auto b : _} -> Bird b => Type where
     MkDovekie : {b : _} -> Bird b => (xD2 : b) -> 
         ((x :b ) -> (y : b) -> (z : b) -> (w : b) -> (v : b) -> xD2 <*> x <*> y <*> z <*> w <*> v = x <*> (y <*> z) <*> (w <*> v)) 
         -> Dovekie
 
+public export
 data BaldEagle : {auto b : _} -> Bird b => Type where
     MkBaldEagle : {b : _} -> Bird b => (xBE : b) -> 
         ((x :b ) -> (y1 : b) -> (y2 : b) -> (y3 : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xBE <*> x <*> y1 <*> y2 <*> y3 <*> z1 <*> z2 <*> z3 = x <*> (y1 <*> y2 <*> y3) <*> (z1 <*> z2 <*> z3)) 
         -> BaldEagle
 
 parameters {auto b : Type} {auto _ : Bird b}
+    public export
     Bluebird : b -> Type
     Bluebird xB = (x : b) -> (y : b) -> (z : b) -> xB <*> x <*> y <*> z = x <*> (y <*> z)
 
+    export
     question1 : {xB : b} -> Bluebird xB -> Condition1
     question1 bluebird yA yB = 
         (xB <*> yA <*> yB ** bluebird yA yB)
     
+    export
     question2 : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> (x : b) -> Fond x ((xB <*> x <*> m)<*>(xB <*> x <*> m))
     question2 bluebird m mock x = 
         let eq1 = sym $ bluebird x m ((xB <*> x) <*> m)
         in trans (cong (x <*>) $ sym $ mock ((xB <*> x) <*> m)) eq1
     
+    export
     question2b : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> (x : b) -> Fond x (m<*>(xB <*> x <*> m))
     question2b bluebird m mock x = 
         let eq1 = question2 bluebird m mock x
@@ -55,11 +67,13 @@ parameters {auto b : Type} {auto _ : Bird b}
             eq3 = trans eq2 eq1
         in trans eq3 $ sym $ mock ((xB <*> x) <*> m)
     
+    export
     question3 : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> Egocentric (m <*> (xB <*> m <*> m))
     question3 bluebird m mock = 
         let eq1 = question2b bluebird m mock m
         in trans (sym $ mock (m <*> ((xB <*> m) <*> m))) eq1
     
+    export
     question4 : 
         {xB : b} -> Bluebird xB -> 
         (m : b) -> Mockingbird m -> 
@@ -70,6 +84,7 @@ parameters {auto b : Type} {auto _ : Bird b}
             eq2 = kestrel (m <*> ((xB <*> xK) <*> m)) x
         in trans eq1 eq2 
 
+    export
     question5 : {xB : b} -> Bluebird xB -> Dove
     question5 bluebird = 
         MkDove (xB <*> xB) 
@@ -79,6 +94,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in rewrite eq1 in eq2)
     --Dxyzw = BBxyzw = B(xy)zw = xy(zw)
 
+    export
     question6 : {xB : b} -> Bluebird xB -> Blackbird
     question6 bluebird = 
         let MkDove xD dove = question5 bluebird
@@ -91,6 +107,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Bx(yz) = DBxyz
     --B1 = DB
 
+    export
     question7 : {xB : b} -> Bluebird xB -> Eagle
     question7 bluebird = 
         let MkBlackbird xB1 blackbird = question6 bluebird
@@ -103,6 +120,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --B1(xy) = BB1xy
     --B1(xy)zwv = BB1xyzwv
 
+    export
     question8 : {xB : b} -> Bluebird xB -> Bunting
     question8 bluebird = 
         let MkEagle xE eagle = question7 bluebird
@@ -115,6 +133,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Bx(yzw) = EBxyzw
     --Bx(yzw)v = EBxyzwv
 
+    export
     question9 : {xB : b} -> Bluebird xB -> Dickcissel
     question9 bluebird = 
         let MkDove xD dove = question5 bluebird
@@ -129,6 +148,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --D(xy) = BDxy          eq1
     --D(xy)zwv = BDxyzwv
 
+    export
     question9b : {xB : b} -> Bluebird xB -> Dickcissel
     question9b bluebird = 
         let MkBlackbird xB1 blackbird = question6 bluebird
@@ -140,6 +160,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --xyz(wv) = (xyz)(wv) = B(xyz)wv    eq1
     --B(xyz) = B1Bxyz
 
+    export
     question10 : {xB : b} -> Bluebird xB -> Becard
     question10 bluebird = 
         let MkDickcissel xD1 dickcissel = question9 bluebird
@@ -150,6 +171,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --x(y(zw)) = Bxy(zw) = D1Bxyzw
 
+    export
     question11 : {xB : b} -> Bluebird xB -> Dovekie
     question11 bluebird = 
         let MkDove xD dove = question5 bluebird
@@ -161,6 +183,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --x(yz)(wv) = Dx(yz)wv  eq2
     --Dx(yz) = DDxyz    eq1 
 
+    export
     question11b : {xB : b} -> Bluebird xB -> Dovekie
     question11b bluebird = 
         let MkBecard xB3 becard = question10 bluebird
@@ -173,6 +196,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --x(yz)(wv) = B(x(yz))wv    eq2
     --B(x(yz)) = B3Bxyz eq1
 
+    export
     question12 : {xB : b} -> Bluebird xB -> BaldEagle
     question12 bluebird = 
         let MkEagle xE eagle = question7 bluebird
@@ -186,9 +210,11 @@ parameters {auto b : Type} {auto _ : Bird b}
         --x(y1y2y3)(z1z2z3) = Ex(y1y2y3)z1z2z3
         --Ex(y1y2y3) = EExy1y2y3
 
+    public export
     Warbler : b -> Type 
     Warbler xW = (x : b) -> (y : b) -> xW <*> x <*> y = x <*> y <*> y
 
+    export
     question14 : {xW : b} -> Warbler xW -> {xI : b} -> Identity xI -> (m ** Mockingbird m)
     question14 warbler ident = 
         (xW <*> xI ** \x => 
@@ -196,6 +222,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 eq2 = cong (<*> x) $ ident x
             in trans eq1 eq2)
 
+    export
     question15 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
     question15 warbler kestrel = 
         (xW <*> xK ** \x => 
@@ -203,15 +230,17 @@ parameters {auto b : Type} {auto _ : Bird b}
                 eq2 = kestrel x x
             in trans eq1 eq2)
     
-
+    export
     question13 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> (m ** Mockingbird m)
     question13 warbler kestrel = 
         let (xI ** ident) = question15 warbler kestrel
         in question14 warbler ident
     
+    public export
     Cardinal : b -> Type
     Cardinal xC = (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = x <*> z <*> y
 
+    export
     question16 : {xC : b} -> Cardinal xC -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
     question16 cardinal kestrel = 
         (xC <*> xK <*> xK ** \x => 
@@ -219,9 +248,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                 eq2 = kestrel x xK
             in trans eq1 eq2)
     
+    public export
     Thrush : b -> Type
     Thrush xT = (x : b) -> (y : b) -> xT <*> x <*> y = y <*> x
 
+    export
     question17 : {xC : b} -> Cardinal xC -> {xI : b} -> Identity xI -> (xT ** Thrush xT)
     question17 cardinal ident = 
         (xC <*> xI ** \x => \y => 
@@ -229,6 +260,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 eq2 = cong (<*> x) $ ident y
             in trans eq1 eq2)
 
+    export
     question18 : {xT : b} -> Thrush xT -> ((x :b) -> (y ** Fond x y)) -> (xA ** ((x : b) -> xA <*> x = x <*> xA))
     question18 thrush prf = 
         let (xA**eq1) = prf xT
@@ -240,15 +272,18 @@ parameters {auto b : Type} {auto _ : Bird b}
     --TAx = Ax  eq2
     --TAx = xA  eq3
 
+    export
     question19 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {m : b} -> Mockingbird m -> (xA ** ((x : b) -> xA <*> x = x <*> xA))
     question19 bluebird thrush mock =  
         question18 thrush (\x => 
             let prf = question2 bluebird m mock x
             in ((((xB <*> x) <*> m) <*> ((xB <*> x) <*> m)) ** prf))
     
+    public export
     Robin : b -> Type 
     Robin xR = (x : b) -> (y : b) -> (z : b) -> xR <*> x <*> y <*> z = y <*> z <*> x
 
+    export
     question20 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xR ** Robin xR)
     question20 bluebird thrush = 
         let MkDove xD dove = question5 bluebird
@@ -257,17 +292,20 @@ parameters {auto b : Type} {auto _ : Bird b}
                 eq2 = thrush x (y <*> z)
             in trans eq1 eq2)
     
+    export
     question21' : {xR : b} -> Robin xR -> Cardinal (xR <*> xR <*> xR)
     question21' robin x y z = 
         let eq1 = cong (<*> y <*> z) $ robin xR xR x
             eq2 = cong (<*> z) $ robin x xR y
         in trans eq1 $ trans eq2 $ robin y x z
 
+    export
     question21 : {xR : b} -> Robin xR -> (xC ** Cardinal xC)
     question21 robin = 
         (xR <*> xR <*> xR ** 
             question21' robin)
 
+    export
     question22a : {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = xR <*> x <*> xR <*> y <*> z 
     question22a robin cardinal x y z = 
         let eq1 = cong (<*> z) $ robin x xR y
@@ -276,6 +314,7 @@ parameters {auto b : Type} {auto _ : Bird b}
         in sym $ trans eq1 $ trans eq2 $ sym eq3
     --Cx = RRRx = RxR
 
+    export
     question22b : 
         {xB : b} -> Bluebird xB -> 
         {xR : b} -> Robin xR ->
@@ -290,6 +329,7 @@ parameters {auto b : Type} {auto _ : Bird b}
             eq4 = cardinal x y z
         in sym $ trans eq1 $ trans eq2 $ trans eq3 $ sym eq4
 
+    export
     question23 : {xC : b} -> Cardinal xC -> (xR ** Robin xR)
     question23 cardinal = 
         (xC <*> xC ** 
@@ -301,9 +341,11 @@ parameters {auto b : Type} {auto _ : Bird b}
         --CCxy = CYx        eq1
         --CCxyz = Cyxz = yzx
     
+    public export
     Finch : b -> Type 
     Finch xF = (x : b) -> (y : b) -> (z : b) -> xF <*> x <*> y <*> z = z <*> y <*> x
 
+    export
     question24 : {xB : b} -> Bluebird xB -> {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (xF ** Finch xF)
     question24 bluebird robin cardinal = 
         (xB <*> xC <*> xR ** 
@@ -314,6 +356,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq3 $ trans eq2 eq1)
     --zyx = Rxzy = (Rx)zy = C(Rx)yz = BCRxyz
 
+    export
     question25 : {xT : b} -> Thrush xT ->  Eagle -> (xF ** Finch xF)
     question25 thrush (MkEagle xE eagle) = 
         (xE <*> xT <*> xT <*> xE <*> xT ** 
@@ -329,9 +372,11 @@ parameters {auto b : Type} {auto _ : Bird b}
     --TT(ETx) = ETTETx
     --TT(ETx)yz = ETTETxyz
 
+    public export
     Vireo : b -> Type 
     Vireo xV = (x : b) -> (y : b) -> (z : b) -> xV <*> x <*> y <*> z = z <*> x <*> y
 
+    export
     question27 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xV ** Vireo xV)
     question27 bluebird thrush = 
         let (xF**finch) = question25 thrush $ question7 bluebird
@@ -344,6 +389,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --zxy = Fyxz = CFxyz
 
+    export
     question28 : {xF : b} -> Finch xF -> {xR : b} -> Robin xR -> (xV ** Vireo xV)
     question28 finch robin = 
         (xR <*> xF <*> xR ** 
@@ -353,6 +399,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq3 = finch y x z
                 in trans eq1 $ trans eq2 eq3)
     
+    export
     question29 : {xC : b} -> Cardinal xC -> {xV : b} -> Vireo xV -> (xF ** Finch xF)
     question29 cardinal vireo = 
         (xC <*> xV ** 
@@ -362,6 +409,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --CVxyz = Vyxz = zyx
 
+    export
     question30 : {xR : b} -> Robin xR -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
     question30 robin kestrel = 
         (xR <*> xR <*> xK ** 
@@ -371,9 +419,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --RAKx = KxA = x
 
+    public export
     CardinalOnceRemoved : b -> Type 
     CardinalOnceRemoved xCstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xCstar <*> x <*> y <*> z <*> w = x <*> y <*> w <*> z
 
+    export
     question31 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xCstar ** CardinalOnceRemoved xCstar)
     question31 bluebird cardinal = 
         (xB <*> xC ** 
@@ -383,9 +433,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --xywz = (xy)wz = C(xy)zw = BCxyzw
     
+    public export
     RobinOnceRemoved : b -> Type 
     RobinOnceRemoved xRstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xRstar <*> x <*> y <*> z <*> w = x <*> z <*> w <*> y
 
+    export
     question32 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xRstar ** RobinOnceRemoved xRstar)
     question32 bluebird cardinal = 
         let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
@@ -397,9 +449,11 @@ parameters {auto b : Type} {auto _ : Bird b}
     --xzwy = C*xzyw = C*C*xyzw
     --C*xzy - C*C*xyz
 
+    public export
     FinchOnceRemoved : b -> Type 
     FinchOnceRemoved xFstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xFstar <*> x <*> y <*> z <*> w = x <*> w <*> z <*> y
 
+    export
     question33 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xFstar ** FinchOnceRemoved xFstar)
     question33 bluebird cardinal = 
         let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
@@ -411,9 +465,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq3 = robinOnceRemoved x y w z
                 in trans eq1 $ trans eq2 eq3)
     
+    public export
     VireoOnceRemoved : b -> Type 
     VireoOnceRemoved xVstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xVstar <*> x <*> y <*> z <*> w = x <*> w <*> y <*> z
 
+    export
     question34 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xVstar ** VireoOnceRemoved xVstar)
     question34 bluebird cardinal = 
         let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
@@ -424,15 +480,20 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = finchOnceRemoved x z y w
                 in trans eq1 eq2)
     
+    public export
     CardinalTwiceRemoved : b -> Type 
     CardinalTwiceRemoved xCdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xCdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z1 <*> z3 <*> z2
+    public export
     RobinTwiceRemoved : b -> Type 
     RobinTwiceRemoved xRdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xRdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z2 <*> z3 <*> z1
+    public export
     FinchTwiceRemoved : b -> Type 
     FinchTwiceRemoved xFdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xFdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z3 <*> z2 <*> z1
+    public export
     VireoTwiceRemoved : b -> Type 
     VireoTwiceRemoved xVdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xVdstar <*> x <*> y <*>z1 <*> z2 <*> z3 = x <*> y <*> z3 <*> z1 <*> z2
 
+    export
     question35a : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xCdstar ** CardinalTwiceRemoved xCdstar)
     question35a bluebird cardinal = 
         let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
@@ -443,6 +504,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --BC*
 
+    export
     question35b : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xRdstar ** RobinTwiceRemoved xRdstar)
     question35b bluebird cardinal =     
         let (xRstar**robinOnceRemoved) = question32 bluebird cardinal
@@ -453,6 +515,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --BR*
 
+    export
     question35c : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xFdstar ** FinchTwiceRemoved xFdstar)
     question35c bluebird cardinal =     
         let (xFstar**finchOnceRemoved) = question33 bluebird cardinal
@@ -463,6 +526,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --BF*
 
+    export
     question35d : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xVdstar ** VireoTwiceRemoved xVdstar)
     question35d bluebird cardinal =     
         let (xVstar**vireoOnceRemoved) = question34 bluebird cardinal
@@ -473,6 +537,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --BV*
 
+    export
     question36 : {xCstar : b} -> CardinalOnceRemoved xCstar -> {xT : b} -> Thrush xT -> (xV ** Vireo xV)
     question36 cardinalOnceRemoved thrush = 
         (xCstar<*>xT ** 
@@ -482,9 +547,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --C*Txyz = Txzy = zxy
 
+    public export
     QueerBird : b -> Type
     QueerBird xQ = (x : b) -> (y : b) -> (z : b) -> xQ <*> x <*> y <*> z = y <*> (x <*> z)
 
+    export
     question37 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ ** QueerBird xQ)
     question37 bluebird cardinal = 
         (xC <*> xB ** 
@@ -494,9 +561,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)    
     --y(xz) = Byxz = CBxyz
 
+    public export
     QuixoticBird : b -> Type 
     QuixoticBird xQ1 = (x : b) -> (y : b) -> (z : b) -> xQ1 <*> x <*> y <*> z = x <*> (z <*> y)
 
+    export
     question38 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ1 ** QuixoticBird xQ1)
     question38 bluebird cardinal = 
         let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
@@ -507,9 +576,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                 in trans eq1 eq2)
     --x(zy) = Bxzy = C*Bxyz
 
+    public export
     QuizzicalBird : b -> Type 
     QuizzicalBird xQ2 = (x : b) -> (y : b) -> (z : b) -> xQ2 <*> x <*> y <*> z = y <*> (z <*> x)
 
+    export
     question39 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ2 ** QuizzicalBird xQ2)
     question39 bluebird cardinal = 
         let (xRstar**robinOnceRemoved) = question32 bluebird cardinal
@@ -519,6 +590,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = bluebird y z x
                 in trans eq1 eq2)
     
+    export
     question40a : {xC : b} -> Cardinal xC -> {xQ1 : b} -> QuixoticBird xQ1 ->  (xQ2 ** QuizzicalBird xQ2)
     question40a cardinal quixotic = 
         (xC<*>xQ1 ** 
@@ -527,6 +599,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = quixotic y x z
                 in trans eq1 eq2)
     
+    export
     question40b : {xC : b} -> Cardinal xC -> {xQ2 : b} -> QuizzicalBird xQ2 ->  (xQ1 ** QuixoticBird xQ1)
     question40b cardinal quizzical = 
         (xC<*>xQ2 ** 
@@ -535,9 +608,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = quizzical y x z
                 in trans eq1 eq2)
 
+    public export
     QuirkyBird : b -> Type 
     QuirkyBird xQ3 = (x : b) -> (y : b) -> (z : b) -> xQ3 <*> x <*> y <*> z = z <*> (x <*> y)
 
+    export
     question41 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xQ3 ** QuirkyBird xQ3)
     question41 bluebird thrush = 
         (xB <*> xT ** 
@@ -546,9 +621,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = thrush (x <*> y) z
                 in trans eq1 eq2)
     
+    public export
     QuackyBird : b -> Type 
     QuackyBird xQ4 = (x : b) -> (y : b) -> (z : b) -> xQ4 <*> x <*> y <*> z = z <*> (y <*> x)
 
+    export
     question42 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ4 ** QuackyBird xQ4)
     question42 bluebird cardinal = 
         let (xFstar**finchOnceRemoved) = question33 bluebird cardinal
@@ -558,7 +635,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = bluebird z y x
                 in trans eq1 eq2)
 
-
+    export
     question43a : {xC : b} -> Cardinal xC -> {xQ3: b} -> QuirkyBird xQ3 ->  (xQ4 ** QuackyBird xQ4)
     question43a cardinal quirky = 
         (xC<*>xQ3 ** 
@@ -567,6 +644,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = quirky y x z
                 in trans eq1 eq2)
     
+    export
     question43b : {xC : b} -> Cardinal xC -> {xQ4 : b} -> QuackyBird xQ4 ->  (xQ3 ** QuirkyBird xQ3)
     question43b cardinal quacky = 
         (xC<*>xQ4 ** 
@@ -575,12 +653,14 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = quacky y x z
                 in trans eq1 eq2)
 
+    export
     question44 : {xT : b} -> Thrush xT -> {xQ1 : b} -> QuixoticBird xQ1 -> QuackyBird (xQ1 <*> xT)
     question44 thrush quixotic x y z = 
         let eq1 = cong (<*> z) $ quixotic xT x y
             eq2 = thrush (y <*> x) z
         in trans eq1 eq2
 
+    export
     question45 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> (xB ** Bluebird xB)
     question45 thrush queer = 
         (xQ <*> xT <*> (xQ <*> xQ) ** 
@@ -591,6 +671,7 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq4 = queer y x z
                 in trans eq1 $ trans eq2 $ trans eq3 eq4)
     
+    export
     question46 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> (xC ** Cardinal xC)
     question46 thrush queer = 
         (xQ <*> xQ <*> (xQ <*> xT) ** 
@@ -601,9 +682,11 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq4 = thrush y (x <*> z)
                 in trans eq1 $ trans eq2 $ trans eq3 eq4)
     
+    public export
     Goldfinch : b -> Type 
     Goldfinch xG = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xG <*> x <*> y <*> z <*> w = x <*> w <*> (y <*> z)
 
+    export
     question47 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xG ** Goldfinch xG)
     question47 bluebird cardinal = 
         (xB<*>xB<*>xC ** 
