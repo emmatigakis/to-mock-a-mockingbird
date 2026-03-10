@@ -93,8 +93,8 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = converseWarbler y x
                 in trans eq1 eq2)
 
-    question8 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {xW : b} -> Warbler xW -> (m ** Mockingbird m)
-    question8 bluebird thrush warbler = 
+    question8 : {xT : b} -> Thrush xT -> {xW : b} -> Warbler xW -> (m ** Mockingbird m)
+    question8 thrush warbler = 
         (xW<*>xT ** 
             \x=> 
                 let eq1 = warbler xT x
@@ -143,8 +143,8 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq2 = cardinalOnceRemoved x y y z
                 in trans eq1 eq2)
     
-    question11 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> {xH : b} -> Hummingbird xH -> (xW ** Warbler xW)
-    question11 bluebird cardinal hummingbird = 
+    question11 : {xC : b} -> Cardinal xC -> {xH : b} -> Hummingbird xH -> (xW ** Warbler xW)
+    question11 cardinal hummingbird = 
         let (xR**robin) = BirdsGalore.question23 cardinal
         in (xC<*>(xH<*>xR) ** 
             \x => \y => 
@@ -153,4 +153,51 @@ parameters {auto b : Type} {auto _ : Bird b}
                     eq3 = robin y x y 
                 in trans eq1 $ trans eq2 eq3)
     
+    Starling : b -> Type 
+    Starling xS = (x : b) -> (y : b) -> (z : b) -> xS <*> x <*> y <*> z = x <*> z <*> (y <*> z)
+
+    question12 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {m : b} -> Mockingbird m -> (xS ** Starling xS)
+    question12 bluebird thrush mock = 
+        let (xWdstar**warblerDStar) = question9b bluebird thrush mock
+            (xR**robin) = BirdsGalore.question20 bluebird thrush
+            (xC**cardinal) = BirdsGalore.question21 robin
+            (xG**goldfinch) = BirdsGalore.question47 bluebird cardinal
+        in (xWdstar<*>xG ** 
+            \x => \y => \z =>
+                let eq1 = warblerDStar xG x y z
+                    eq2 = goldfinch x y z z
+                in trans eq1 eq2)
+    
+    question13 : {xS : b} -> Starling xS -> {xC : b} -> Cardinal xC -> (xH ** Hummingbird xH)
+    question13 starling cardinal = 
+        let (xR**robin) = BirdsGalore.question23 cardinal
+        in (xS<*>xR ** 
+            \x => \y => \z =>
+                let eq1 = cong (<*> z) $ starling xR x y
+                    eq2 = robin y (x <*> y) z
+                in trans eq1 eq2)
+    
+    question14a : {xS : b} -> Starling xS -> {xC : b} -> Cardinal xC -> (xW ** Warbler xW)
+    question14a starling cardinal = 
+        let (xH ** hummingbird) = question13 starling cardinal
+        in question11 cardinal hummingbird
+
+    question14b : {xS : b} -> Starling xS -> {xR : b} -> Robin xR -> (xW ** Warbler xW)
+    question14b starling robin = 
+        let (xC**cardinal) = BirdsGalore.question21 robin
+        in question14a starling cardinal
+    
+    
+    question15 : {xS : b} -> Starling xS -> {xT : b} -> Thrush xT -> (xW ** Warbler xW)
+    question15 starling thrush = 
+        (xS<*>xT ** 
+            \x => \y =>
+                let eq1 = starling xT x y
+                    eq2 = thrush y (x <*> y) 
+                in trans eq1 eq2)
+    
+    question16 : {xS : b} -> Starling xS -> {xT : b} -> Thrush xT -> (m ** Mockingbird m)
+    question16 starling thrush = 
+        let (xW**warbler) = question15 starling thrush
+        in question8 thrush warbler
     
