@@ -167,7 +167,7 @@ parameters {auto b : Type} {auto _ : Bird b}
         in rewrite sym ego in sym $ trans ego $ sym eq1
 
     export
-    question12 : {xK : b} -> {x : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
+    question12 : {xK : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
     question12 kestrel x eq1 = 
         let eq2 = kestrel x (xK <*> x)
         in trans (sym eq1) eq2
