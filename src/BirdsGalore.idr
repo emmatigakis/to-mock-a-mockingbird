@@ -1,5 +1,6 @@
 module BirdsGalore
 
+import Data.DPair
 import ToMockAMockingbird
 
 %default total 
@@ -45,22 +46,22 @@ data BaldEagle : {auto b : _} -> Bird b => Type where
 
 parameters {auto b : Type} {auto _ : Bird b}
     public export
-    Bluebird : b -> Type
+    0 Bluebird : b -> Type
     Bluebird xB = (x : b) -> (y : b) -> (z : b) -> xB <*> x <*> y <*> z = x <*> (y <*> z)
 
     export
-    question1 : {xB : b} -> Bluebird xB -> Condition1
+    0 question1 : {xB : b} -> Bluebird xB -> Condition1
     question1 bluebird yA yB = 
-        (xB <*> yA <*> yB ** bluebird yA yB)
+        Evidence (xB <*> yA <*> yB) $ bluebird yA yB
     
     export
-    question2 : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> (x : b) -> Fond x ((xB <*> x <*> m)<*>(xB <*> x <*> m))
+    0 question2 : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> (x : b) -> Fond x ((xB <*> x <*> m)<*>(xB <*> x <*> m))
     question2 bluebird m mock x = 
         let eq1 = sym $ bluebird x m ((xB <*> x) <*> m)
         in trans (cong (x <*>) $ sym $ mock ((xB <*> x) <*> m)) eq1
     
     export
-    question2b : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> (x : b) -> Fond x (m<*>(xB <*> x <*> m))
+    0 question2b : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> (x : b) -> Fond x (m<*>(xB <*> x <*> m))
     question2b bluebird m mock x = 
         let eq1 = question2 bluebird m mock x
             eq2 = cong (x<*>) $ mock ((xB <*> x) <*> m)
@@ -68,13 +69,13 @@ parameters {auto b : Type} {auto _ : Bird b}
         in trans eq3 $ sym $ mock ((xB <*> x) <*> m)
     
     export
-    question3 : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> Egocentric (m <*> (xB <*> m <*> m))
+    0 question3 : {xB : b} -> Bluebird xB -> (m : b) -> Mockingbird m -> Egocentric (m <*> (xB <*> m <*> m))
     question3 bluebird m mock = 
         let eq1 = question2b bluebird m mock m
         in trans (sym $ mock (m <*> ((xB <*> m) <*> m))) eq1
     
     export
-    question4 : 
+    0 question4 : 
         {xB : b} -> Bluebird xB -> 
         (m : b) -> Mockingbird m -> 
         (xK : b) -> Kestrel xK 
@@ -85,7 +86,7 @@ parameters {auto b : Type} {auto _ : Bird b}
         in trans eq1 eq2 
 
     export
-    question5 : {xB : b} -> Bluebird xB -> Dove
+    0 question5 : {xB : b} -> Bluebird xB -> Dove
     question5 bluebird = 
         MkDove (xB <*> xB) 
             (\x => \y => \z => \w => 
@@ -95,7 +96,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Dxyzw = BBxyzw = B(xy)zw = xy(zw)
 
     export
-    question6 : {xB : b} -> Bluebird xB -> Blackbird
+    0 question6 : {xB : b} -> Bluebird xB -> Blackbird
     question6 bluebird = 
         let MkDove xD dove = question5 bluebird
         in MkBlackbird (xD <*> xB) 
@@ -108,7 +109,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --B1 = DB
 
     export
-    question7 : {xB : b} -> Bluebird xB -> Eagle
+    0 question7 : {xB : b} -> Bluebird xB -> Eagle
     question7 bluebird = 
         let MkBlackbird xB1 blackbird = question6 bluebird
         in MkEagle (xB <*> xB1) 
@@ -121,7 +122,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --B1(xy)zwv = BB1xyzwv
 
     export
-    question8 : {xB : b} -> Bluebird xB -> Bunting
+    0 question8 : {xB : b} -> Bluebird xB -> Bunting
     question8 bluebird = 
         let MkEagle xE eagle = question7 bluebird
         in MkBunting (xE <*> xB) 
@@ -134,7 +135,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Bx(yzw)v = EBxyzwv
 
     export
-    question9 : {xB : b} -> Bluebird xB -> Dickcissel
+    0 question9 : {xB : b} -> Bluebird xB -> Dickcissel
     question9 bluebird = 
         let MkDove xD dove = question5 bluebird
         in MkDickcissel (xB <*> xD) 
@@ -149,7 +150,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --D(xy)zwv = BDxyzwv
 
     export
-    question9b : {xB : b} -> Bluebird xB -> Dickcissel
+    0 question9b : {xB : b} -> Bluebird xB -> Dickcissel
     question9b bluebird = 
         let MkBlackbird xB1 blackbird = question6 bluebird
         in MkDickcissel (xB1 <*> xB) 
@@ -161,7 +162,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --B(xyz) = B1Bxyz
 
     export
-    question10 : {xB : b} -> Bluebird xB -> Becard
+    0 question10 : {xB : b} -> Bluebird xB -> Becard
     question10 bluebird = 
         let MkDickcissel xD1 dickcissel = question9 bluebird
         in MkBecard (xD1 <*> xB) 
@@ -172,7 +173,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --x(y(zw)) = Bxy(zw) = D1Bxyzw
 
     export
-    question11 : {xB : b} -> Bluebird xB -> Dovekie
+    0 question11 : {xB : b} -> Bluebird xB -> Dovekie
     question11 bluebird = 
         let MkDove xD dove = question5 bluebird
         in MkDovekie (xD <*> xD) 
@@ -184,7 +185,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Dx(yz) = DDxyz    eq1 
 
     export
-    question11b : {xB : b} -> Bluebird xB -> Dovekie
+    0 question11b : {xB : b} -> Bluebird xB -> Dovekie
     question11b bluebird = 
         let MkBecard xB3 becard = question10 bluebird
         in MkDovekie (xB3 <*> xB) 
@@ -197,7 +198,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --B(x(yz)) = B3Bxyz eq1
 
     export
-    question12 : {xB : b} -> Bluebird xB -> BaldEagle
+    0 question12 : {xB : b} -> Bluebird xB -> BaldEagle
     question12 bluebird = 
         let MkEagle xE eagle = question7 bluebird
         in MkBaldEagle (xE <*> xE) 
@@ -211,102 +212,101 @@ parameters {auto b : Type} {auto _ : Bird b}
         --Ex(y1y2y3) = EExy1y2y3
 
     public export
-    Warbler : b -> Type 
+    0 Warbler : b -> Type 
     Warbler xW = (x : b) -> (y : b) -> xW <*> x <*> y = x <*> y <*> y
 
     export
-    question14 : {xW : b} -> Warbler xW -> {xI : b} -> Identity xI -> (m ** Mockingbird m)
+    0 question14 : {xW : b} -> Warbler xW -> {xI : b} -> Identity xI -> Exists(\m => Mockingbird m)
     question14 warbler ident = 
-        (xW <*> xI ** \x => 
+        Evidence (xW <*> xI) $ \x => 
             let eq1 = warbler xI x
                 eq2 = cong (<*> x) $ ident x
-            in trans eq1 eq2)
+            in trans eq1 eq2
 
     export
-    question15 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
+    0 question15 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> Exists(\xI => Identity xI)
     question15 warbler kestrel = 
-        (xW <*> xK ** \x => 
+        Evidence(xW <*> xK) $ \x => 
             let eq1 = warbler xK x
                 eq2 = kestrel x x
-            in trans eq1 eq2)
+            in trans eq1 eq2
     
     export
-    question13 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> (m ** Mockingbird m)
+    0 question13 : {xW : b} -> Warbler xW -> {xK : b} -> Kestrel xK -> Exists(\m => Mockingbird m)
     question13 warbler kestrel = 
-        let (xI ** ident) = question15 warbler kestrel
+        let Evidence xI ident = question15 warbler kestrel
         in question14 warbler ident
     
     public export
-    Cardinal : b -> Type
+    0 Cardinal : b -> Type
     Cardinal xC = (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = x <*> z <*> y
 
     export
-    question16 : {xC : b} -> Cardinal xC -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
+    0 question16 : {xC : b} -> Cardinal xC -> {xK : b} -> Kestrel xK -> Exists(\xI => Identity xI)
     question16 cardinal kestrel = 
-        (xC <*> xK <*> xK ** \x => 
+        Evidence (xC <*> xK <*> xK) $ \x => 
             let eq1 = cardinal xK xK x
                 eq2 = kestrel x xK
-            in trans eq1 eq2)
+            in trans eq1 eq2
     
     public export
-    Thrush : b -> Type
+    0 Thrush : b -> Type
     Thrush xT = (x : b) -> (y : b) -> xT <*> x <*> y = y <*> x
 
     export
-    question17 : {xC : b} -> Cardinal xC -> {xI : b} -> Identity xI -> (xT ** Thrush xT)
+    0 question17 : {xC : b} -> Cardinal xC -> {xI : b} -> Identity xI -> Exists(\xT => Thrush xT)
     question17 cardinal ident = 
-        (xC <*> xI ** \x => \y => 
+        Evidence (xC <*> xI) $ \x => \y => 
             let eq1 = cardinal xI x y
                 eq2 = cong (<*> x) $ ident y
-            in trans eq1 eq2)
+            in trans eq1 eq2
 
     export
-    question18 : {xT : b} -> Thrush xT -> ((x :b) -> (y ** Fond x y)) -> (xA ** ((x : b) -> xA <*> x = x <*> xA))
+    0 question18 : {xT : b} -> Thrush xT -> ((x :b) -> Exists(\y => Fond x y)) -> Exists(\xA => ((x : b) -> xA <*> x = x <*> xA))
     question18 thrush prf = 
-        let (xA**eq1) = prf xT
-        in (xA ** \x => 
+        let Evidence xA eq1 = prf xT
+        in Evidence xA $ \x => 
             let eq2 = cong (<*> x) eq1
                 eq3 = thrush xA x
-            in trans (sym eq2) eq3)
+            in trans (sym eq2) eq3
     --TA = A    eq1
     --TAx = Ax  eq2
     --TAx = xA  eq3
 
     export
-    question19 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {m : b} -> Mockingbird m -> (xA ** ((x : b) -> xA <*> x = x <*> xA))
+    0 question19 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> {m : b} -> Mockingbird m -> Exists(\xA => ((x : b) -> xA <*> x = x <*> xA))
     question19 bluebird thrush mock =  
         question18 thrush (\x => 
             let prf = question2 bluebird m mock x
-            in ((((xB <*> x) <*> m) <*> ((xB <*> x) <*> m)) ** prf))
+            in Evidence (((xB <*> x) <*> m) <*> ((xB <*> x) <*> m)) prf)
     
     public export
-    Robin : b -> Type 
+    0 Robin : b -> Type 
     Robin xR = (x : b) -> (y : b) -> (z : b) -> xR <*> x <*> y <*> z = y <*> z <*> x
 
     export
-    question20 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xR ** Robin xR)
+    0 question20 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> Exists(\xR => Robin xR)
     question20 bluebird thrush = 
         let MkDove xD dove = question5 bluebird
-        in (xD <*> xT ** \x => \y => \z => 
+        in Evidence (xD <*> xT) $ \x => \y => \z => 
             let eq1 = dove xT x y z
                 eq2 = thrush x (y <*> z)
-            in trans eq1 eq2)
+            in trans eq1 eq2
     
     export
-    question21' : {xR : b} -> Robin xR -> Cardinal (xR <*> xR <*> xR)
+    0 question21' : {xR : b} -> Robin xR -> Cardinal (xR <*> xR <*> xR)
     question21' robin x y z = 
         let eq1 = cong (<*> y <*> z) $ robin xR xR x
             eq2 = cong (<*> z) $ robin x xR y
         in trans eq1 $ trans eq2 $ robin y x z
 
     export
-    question21 : {xR : b} -> Robin xR -> (xC ** Cardinal xC)
+    0 question21 : {xR : b} -> Robin xR -> Exists(\xC => Cardinal xC)
     question21 robin = 
-        (xR <*> xR <*> xR ** 
-            question21' robin)
+        Evidence (xR <*> xR <*> xR) $ question21' robin
 
     export
-    question22a : {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = xR <*> x <*> xR <*> y <*> z 
+    0 question22a : {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (x : b) -> (y : b) -> (z : b) -> xC <*> x <*> y <*> z = xR <*> x <*> xR <*> y <*> z 
     question22a robin cardinal x y z = 
         let eq1 = cong (<*> z) $ robin x xR y
             eq2 = robin y x z
@@ -315,7 +315,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Cx = RRRx = RxR
 
     export
-    question22b : 
+    0 question22b : 
         {xB : b} -> Bluebird xB -> 
         {xR : b} -> Robin xR ->
         {xT : b} -> Thrush xT ->  
@@ -330,369 +330,369 @@ parameters {auto b : Type} {auto _ : Bird b}
         in sym $ trans eq1 $ trans eq2 $ trans eq3 $ sym eq4
 
     export
-    question23 : {xC : b} -> Cardinal xC -> (xR ** Robin xR)
+    0 question23 : {xC : b} -> Cardinal xC -> Exists(\xR => Robin xR)
     question23 cardinal = 
-        (xC <*> xC ** 
+        Evidence (xC <*> xC) $ 
             \x => \y => \z => 
                 let eq1 = cardinal xC x y
                     eq2 = cong (<*> z) eq1
                     eq3 = cardinal y x z
-                in trans eq2 eq3)
+                in trans eq2 eq3
         --CCxy = CYx        eq1
         --CCxyz = Cyxz = yzx
     
     public export
-    Finch : b -> Type 
+    0 Finch : b -> Type 
     Finch xF = (x : b) -> (y : b) -> (z : b) -> xF <*> x <*> y <*> z = z <*> y <*> x
 
     export
-    question24 : {xB : b} -> Bluebird xB -> {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> (xF ** Finch xF)
+    0 question24 : {xB : b} -> Bluebird xB -> {xR : b} -> Robin xR -> {xC : b} -> Cardinal xC -> Exists(\xF => Finch xF)
     question24 bluebird robin cardinal = 
-        (xB <*> xC <*> xR ** 
+        Evidence (xB <*> xC <*> xR) $
             \x => \y => \z => 
                 let eq1 = robin x z y
                     eq2 = cardinal (xR <*> x) y z
                     eq3 = cong (<*> y <*> z) $ bluebird xC xR x
-                in trans eq3 $ trans eq2 eq1)
+                in trans eq3 $ trans eq2 eq1
     --zyx = Rxzy = (Rx)zy = C(Rx)yz = BCRxyz
 
     export
-    question25 : {xT : b} -> Thrush xT ->  Eagle -> (xF ** Finch xF)
+    0 question25 : {xT : b} -> Thrush xT ->  Eagle -> Exists(\xF => Finch xF)
     question25 thrush (MkEagle xE eagle) = 
-        (xE <*> xT <*> xT <*> xE <*> xT ** 
+        Evidence (xE <*> xT <*> xT <*> xE <*> xT) $ 
             \x => \y => \z => 
                 let eq1 = thrush x (z <*> y)
                     eq2 = cong ((xT <*> x) <*>) $ thrush y z
                     eq3 = eagle xT x xT y z
                     eq4 = cong (<*> y <*> z) $ thrush xT (xE <*> xT <*> x)
                     eq5 = cong (<*> y <*> z) $ eagle xT xT xE xT x
-                in trans eq5 $ trans eq4 $ trans eq3 $ trans eq2 eq1)
+                in trans eq5 $ trans eq4 $ trans eq3 $ trans eq2 eq1
     --zyx = Tx(zy) = Tx(Tyz) = ETxTyz = (ETx)Tyz = TT(ETx)yz 
     --(ETx)T = TT(ETx)      
     --TT(ETx) = ETTETx
     --TT(ETx)yz = ETTETxyz
 
     public export
-    Vireo : b -> Type 
+    0 Vireo : b -> Type 
     Vireo xV = (x : b) -> (y : b) -> (z : b) -> xV <*> x <*> y <*> z = z <*> x <*> y
 
     export
-    question27 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xV ** Vireo xV)
+    0 question27 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> Exists(\xV => Vireo xV)
     question27 bluebird thrush = 
-        let (xF**finch) = question25 thrush $ question7 bluebird
-            (xR**robin) = question20 bluebird thrush
-            (xC**cardinal) = question21 robin
-        in (xC <*> xF ** 
+        let Evidence xF finch = question25 thrush $ question7 bluebird
+            Evidence xR robin = question20 bluebird thrush
+            Evidence xC cardinal = question21 robin
+        in Evidence (xC <*> xF) $
             \x => \y => \z => 
                 let eq1 = cong (<*> z) $ cardinal xF x y
                     eq2 = finch y x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --zxy = Fyxz = CFxyz
 
     export
-    question28 : {xF : b} -> Finch xF -> {xR : b} -> Robin xR -> (xV ** Vireo xV)
+    0 question28 : {xF : b} -> Finch xF -> {xR : b} -> Robin xR -> Exists(\xV => Vireo xV)
     question28 finch robin = 
-        (xR <*> xF <*> xR ** 
+        Evidence (xR <*> xF <*> xR) $
             \x => \y => \z => 
                 let eq1 = cong (<*> y <*> z) $ robin xF xR x
                     eq2 = cong (<*> z) $ robin x xF y
                     eq3 = finch y x z
-                in trans eq1 $ trans eq2 eq3)
+                in trans eq1 $ trans eq2 eq3
     
     export
-    question29 : {xC : b} -> Cardinal xC -> {xV : b} -> Vireo xV -> (xF ** Finch xF)
+    0 question29 : {xC : b} -> Cardinal xC -> {xV : b} -> Vireo xV -> Exists(\xF => Finch xF)
     question29 cardinal vireo = 
-        (xC <*> xV ** 
+        Evidence (xC <*> xV) $
             \x => \y => \z => 
                 let eq1 = cong (<*> z) $ cardinal xV x y
                     eq2 = vireo y x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --CVxyz = Vyxz = zyx
 
     export
-    question30 : {xR : b} -> Robin xR -> {xK : b} -> Kestrel xK -> (xI ** Identity xI)
+    0 question30 : {xR : b} -> Robin xR -> {xK : b} -> Kestrel xK -> Exists(\xI => Identity xI)
     question30 robin kestrel = 
-        (xR <*> xR <*> xK ** 
+        Evidence (xR <*> xR <*> xK) $
             \x => 
                 let eq1 = robin xR xK x
                     eq2 = kestrel x xR
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --RAKx = KxA = x
 
     public export
-    CardinalOnceRemoved : b -> Type 
+    0 CardinalOnceRemoved : b -> Type 
     CardinalOnceRemoved xCstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xCstar <*> x <*> y <*> z <*> w = x <*> y <*> w <*> z
 
     export
-    question31 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xCstar ** CardinalOnceRemoved xCstar)
+    0 question31 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xCstar => CardinalOnceRemoved xCstar)
     question31 bluebird cardinal = 
-        (xB <*> xC ** 
+        Evidence (xB <*> xC) $ 
             \x => \y => \z => \w => 
                 let eq1 = cong (<*> z <*> w) $ bluebird xC x y
                     eq2 = cardinal (x <*> y) z w
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --xywz = (xy)wz = C(xy)zw = BCxyzw
     
     public export
-    RobinOnceRemoved : b -> Type 
+    0 RobinOnceRemoved : b -> Type 
     RobinOnceRemoved xRstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xRstar <*> x <*> y <*> z <*> w = x <*> z <*> w <*> y
 
     export
-    question32 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xRstar ** RobinOnceRemoved xRstar)
+    0 question32 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xRstar => RobinOnceRemoved xRstar)
     question32 bluebird cardinal = 
-        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
-        in (xCstar <*> xCstar ** 
+        let Evidence xCstar cardinalOnceRemoved = question31 bluebird cardinal
+        in Evidence (xCstar <*> xCstar) $
             \x => \y => \z => \w => 
                 let eq1 = cong (<*> w ) $ cardinalOnceRemoved xCstar x y z
                     eq2 = cardinalOnceRemoved x z y w
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --xzwy = C*xzyw = C*C*xyzw
     --C*xzy - C*C*xyz
 
     public export
-    FinchOnceRemoved : b -> Type 
+    0 FinchOnceRemoved : b -> Type 
     FinchOnceRemoved xFstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xFstar <*> x <*> y <*> z <*> w = x <*> w <*> z <*> y
 
     export
-    question33 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xFstar ** FinchOnceRemoved xFstar)
+    0 question33 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xFstar => FinchOnceRemoved xFstar)
     question33 bluebird cardinal = 
-        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
-            (xRstar**robinOnceRemoved) = question32 bluebird cardinal
-        in (xB<*>xCstar<*>xRstar ** 
+        let Evidence xCstar cardinalOnceRemoved = question31 bluebird cardinal
+            Evidence xRstar robinOnceRemoved = question32 bluebird cardinal
+        in Evidence (xB<*>xCstar<*>xRstar) $ 
             \x => \y => \z => \w => 
                 let eq1 = cong (<*> y <*> z <*> w) $ bluebird xCstar xRstar x
                     eq2 = cardinalOnceRemoved (xRstar <*> x) y z w
                     eq3 = robinOnceRemoved x y w z
-                in trans eq1 $ trans eq2 eq3)
+                in trans eq1 $ trans eq2 eq3
     
     public export
-    VireoOnceRemoved : b -> Type 
+    0 VireoOnceRemoved : b -> Type 
     VireoOnceRemoved xVstar = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xVstar <*> x <*> y <*> z <*> w = x <*> w <*> y <*> z
 
     export
-    question34 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xVstar ** VireoOnceRemoved xVstar)
+    0 question34 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xVstar => VireoOnceRemoved xVstar)
     question34 bluebird cardinal = 
-        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
-            (xFstar**finchOnceRemoved) = question33 bluebird cardinal
-        in (xCstar<*>xFstar ** 
+        let Evidence xCstar cardinalOnceRemoved = question31 bluebird cardinal
+            Evidence xFstar finchOnceRemoved = question33 bluebird cardinal
+        in Evidence (xCstar<*>xFstar) $
             \x => \y => \z => \w => 
                 let eq1 = cong (<*> w) $ cardinalOnceRemoved xFstar x y z
                     eq2 = finchOnceRemoved x z y w
-                in trans eq1 eq2)
+                in trans eq1 eq2
     
     public export
-    CardinalTwiceRemoved : b -> Type 
+    0 CardinalTwiceRemoved : b -> Type 
     CardinalTwiceRemoved xCdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xCdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z1 <*> z3 <*> z2
     public export
-    RobinTwiceRemoved : b -> Type 
+    0 RobinTwiceRemoved : b -> Type 
     RobinTwiceRemoved xRdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xRdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z2 <*> z3 <*> z1
     public export
-    FinchTwiceRemoved : b -> Type 
+    0 FinchTwiceRemoved : b -> Type 
     FinchTwiceRemoved xFdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xFdstar <*> x <*> y <*> z1 <*> z2 <*> z3 = x <*> y <*> z3 <*> z2 <*> z1
     public export
-    VireoTwiceRemoved : b -> Type 
+    0 VireoTwiceRemoved : b -> Type 
     VireoTwiceRemoved xVdstar = (x : b) -> (y : b) -> (z1 : b) -> (z2 : b) -> (z3 : b) -> xVdstar <*> x <*> y <*>z1 <*> z2 <*> z3 = x <*> y <*> z3 <*> z1 <*> z2
 
     export
-    question35a : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xCdstar ** CardinalTwiceRemoved xCdstar)
+    0 question35a : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xCdstar => CardinalTwiceRemoved xCdstar)
     question35a bluebird cardinal = 
-        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
-        in (xB<*>xCstar ** 
+        let Evidence xCstar cardinalOnceRemoved = question31 bluebird cardinal
+        in Evidence (xB<*>xCstar) $
             \x => \y => \z1 => \z2 => \z3 => 
                 let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xCstar x y
                     eq2 = cardinalOnceRemoved (x <*> y) z1 z2 z3
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --BC*
 
     export
-    question35b : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xRdstar ** RobinTwiceRemoved xRdstar)
+    0 question35b : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xRdstar => RobinTwiceRemoved xRdstar)
     question35b bluebird cardinal =     
-        let (xRstar**robinOnceRemoved) = question32 bluebird cardinal
-        in (xB<*>xRstar ** 
+        let Evidence xRstar robinOnceRemoved = question32 bluebird cardinal
+        in Evidence (xB<*>xRstar) $
             \x => \y => \z1 => \z2 => \z3 => 
                 let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xRstar x y
                     eq2 = robinOnceRemoved (x <*> y) z1 z2 z3
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --BR*
 
     export
-    question35c : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xFdstar ** FinchTwiceRemoved xFdstar)
+    0 question35c : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xFdstar => FinchTwiceRemoved xFdstar)
     question35c bluebird cardinal =     
-        let (xFstar**finchOnceRemoved) = question33 bluebird cardinal
-        in (xB<*>xFstar ** 
+        let Evidence xFstar finchOnceRemoved = question33 bluebird cardinal
+        in Evidence (xB<*>xFstar) $
             \x => \y => \z1 => \z2 => \z3 => 
                 let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xFstar x y
                     eq2 = finchOnceRemoved (x <*> y) z1 z2 z3
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --BF*
 
     export
-    question35d : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xVdstar ** VireoTwiceRemoved xVdstar)
+    0 question35d : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xVdstar => VireoTwiceRemoved xVdstar)
     question35d bluebird cardinal =     
-        let (xVstar**vireoOnceRemoved) = question34 bluebird cardinal
-        in (xB<*>xVstar ** 
+        let Evidence xVstar vireoOnceRemoved = question34 bluebird cardinal
+        in Evidence (xB<*>xVstar) $
             \x => \y => \z1 => \z2 => \z3 => 
                 let eq1 = cong (<*> z1 <*> z2 <*> z3) $ bluebird xVstar x y
                     eq2 = vireoOnceRemoved (x <*> y) z1 z2 z3
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --BV*
 
     export
-    question36 : {xCstar : b} -> CardinalOnceRemoved xCstar -> {xT : b} -> Thrush xT -> (xV ** Vireo xV)
+    0 question36 : {xCstar : b} -> CardinalOnceRemoved xCstar -> {xT : b} -> Thrush xT -> Exists(\xV => Vireo xV)
     question36 cardinalOnceRemoved thrush = 
-        (xCstar<*>xT ** 
+        Evidence (xCstar<*>xT) $ 
             \x => \y => \z => 
                 let eq1 = cardinalOnceRemoved xT x y z
                     eq2 = cong (<*> y) $ thrush x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --C*Txyz = Txzy = zxy
 
     public export
-    QueerBird : b -> Type
+    0 QueerBird : b -> Type
     QueerBird xQ = (x : b) -> (y : b) -> (z : b) -> xQ <*> x <*> y <*> z = y <*> (x <*> z)
 
     export
-    question37 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ ** QueerBird xQ)
+    0 question37 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xQ => QueerBird xQ)
     question37 bluebird cardinal = 
-        (xC <*> xB ** 
+        Evidence (xC <*> xB) $
             \x => \y => \z =>   
                 let eq1 = cong (<*> z) $ cardinal xB x y
                     eq2 = bluebird y x z
-                in trans eq1 eq2)    
+                in trans eq1 eq2
     --y(xz) = Byxz = CBxyz
 
     public export
-    QuixoticBird : b -> Type 
+    0 QuixoticBird : b -> Type 
     QuixoticBird xQ1 = (x : b) -> (y : b) -> (z : b) -> xQ1 <*> x <*> y <*> z = x <*> (z <*> y)
 
     export
-    question38 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ1 ** QuixoticBird xQ1)
+    0 question38 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xQ1 => QuixoticBird xQ1)
     question38 bluebird cardinal = 
-        let (xCstar**cardinalOnceRemoved) = question31 bluebird cardinal
-        in (xCstar<*>xB ** 
+        let Evidence xCstar cardinalOnceRemoved = question31 bluebird cardinal
+        in Evidence (xCstar<*>xB) $ 
             \x => \y => \z =>   
                 let eq1 = cardinalOnceRemoved xB x y z
                     eq2 = bluebird x z y
-                in trans eq1 eq2)
+                in trans eq1 eq2
     --x(zy) = Bxzy = C*Bxyz
 
     public export
-    QuizzicalBird : b -> Type 
+    0 QuizzicalBird : b -> Type 
     QuizzicalBird xQ2 = (x : b) -> (y : b) -> (z : b) -> xQ2 <*> x <*> y <*> z = y <*> (z <*> x)
 
     export
-    question39 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ2 ** QuizzicalBird xQ2)
+    0 question39 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xQ2 => QuizzicalBird xQ2)
     question39 bluebird cardinal = 
-        let (xRstar**robinOnceRemoved) = question32 bluebird cardinal
-        in (xRstar<*>xB ** 
+        let Evidence xRstar robinOnceRemoved = question32 bluebird cardinal
+        in Evidence (xRstar<*>xB) $
             \x => \y => \z =>   
                 let eq1 = robinOnceRemoved xB x y z
                     eq2 = bluebird y z x
-                in trans eq1 eq2)
+                in trans eq1 eq2
     
     export
-    question40a : {xC : b} -> Cardinal xC -> {xQ1 : b} -> QuixoticBird xQ1 ->  (xQ2 ** QuizzicalBird xQ2)
+    0 question40a : {xC : b} -> Cardinal xC -> {xQ1 : b} -> QuixoticBird xQ1 ->  Exists(\xQ2 => QuizzicalBird xQ2)
     question40a cardinal quixotic = 
-        (xC<*>xQ1 ** 
+        Evidence (xC<*>xQ1) $
             \x => \y => \z =>   
                 let eq1 = cong (<*> z) $ cardinal xQ1 x y
                     eq2 = quixotic y x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
     
     export
-    question40b : {xC : b} -> Cardinal xC -> {xQ2 : b} -> QuizzicalBird xQ2 ->  (xQ1 ** QuixoticBird xQ1)
+    0 question40b : {xC : b} -> Cardinal xC -> {xQ2 : b} -> QuizzicalBird xQ2 ->  Exists(\xQ1 => QuixoticBird xQ1)
     question40b cardinal quizzical = 
-        (xC<*>xQ2 ** 
+        Evidence (xC<*>xQ2) $
             \x => \y => \z =>   
                 let eq1 = cong (<*> z) $ cardinal xQ2 x y
                     eq2 = quizzical y x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
 
     public export
-    QuirkyBird : b -> Type 
+    0 QuirkyBird : b -> Type 
     QuirkyBird xQ3 = (x : b) -> (y : b) -> (z : b) -> xQ3 <*> x <*> y <*> z = z <*> (x <*> y)
 
     export
-    question41 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> (xQ3 ** QuirkyBird xQ3)
+    0 question41 : {xB : b} -> Bluebird xB -> {xT : b} -> Thrush xT -> Exists(\xQ3 => QuirkyBird xQ3)
     question41 bluebird thrush = 
-        (xB <*> xT ** 
+        Evidence (xB <*> xT) $
             \x => \y => \z =>   
                 let eq1 = cong (<*> z) $ bluebird xT x y
                     eq2 = thrush (x <*> y) z
-                in trans eq1 eq2)
+                in trans eq1 eq2
     
     public export
-    QuackyBird : b -> Type 
+    0 QuackyBird : b -> Type 
     QuackyBird xQ4 = (x : b) -> (y : b) -> (z : b) -> xQ4 <*> x <*> y <*> z = z <*> (y <*> x)
 
     export
-    question42 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xQ4 ** QuackyBird xQ4)
+    0 question42 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xQ4 => QuackyBird xQ4)
     question42 bluebird cardinal = 
-        let (xFstar**finchOnceRemoved) = question33 bluebird cardinal
-        in (xFstar<*>xB ** 
+        let Evidence xFstar finchOnceRemoved = question33 bluebird cardinal
+        in Evidence (xFstar<*>xB) $ 
             \x => \y => \z =>   
                 let eq1 = finchOnceRemoved xB x y z
                     eq2 = bluebird z y x
-                in trans eq1 eq2)
+                in trans eq1 eq2
 
     export
-    question43a : {xC : b} -> Cardinal xC -> {xQ3: b} -> QuirkyBird xQ3 ->  (xQ4 ** QuackyBird xQ4)
+    0 question43a : {xC : b} -> Cardinal xC -> {xQ3: b} -> QuirkyBird xQ3 ->  Exists(\xQ4 => QuackyBird xQ4)
     question43a cardinal quirky = 
-        (xC<*>xQ3 ** 
+        Evidence (xC<*>xQ3) $
             \x => \y => \z =>   
                 let eq1 = cong (<*> z) $ cardinal xQ3 x y
                     eq2 = quirky y x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
     
     export
-    question43b : {xC : b} -> Cardinal xC -> {xQ4 : b} -> QuackyBird xQ4 ->  (xQ3 ** QuirkyBird xQ3)
+    0 question43b : {xC : b} -> Cardinal xC -> {xQ4 : b} -> QuackyBird xQ4 ->  Exists(\xQ3 => QuirkyBird xQ3)
     question43b cardinal quacky = 
-        (xC<*>xQ4 ** 
+        Evidence (xC<*>xQ4) $
             \x => \y => \z =>   
                 let eq1 = cong (<*> z) $ cardinal xQ4 x y
                     eq2 = quacky y x z
-                in trans eq1 eq2)
+                in trans eq1 eq2
 
     export
-    question44 : {xT : b} -> Thrush xT -> {xQ1 : b} -> QuixoticBird xQ1 -> QuackyBird (xQ1 <*> xT)
+    0 question44 : {xT : b} -> Thrush xT -> {xQ1 : b} -> QuixoticBird xQ1 -> QuackyBird (xQ1 <*> xT)
     question44 thrush quixotic x y z = 
         let eq1 = cong (<*> z) $ quixotic xT x y
             eq2 = thrush (y <*> x) z
         in trans eq1 eq2
 
     export
-    question45 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> (xB ** Bluebird xB)
+    0 question45 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> Exists(\xB => Bluebird xB)
     question45 thrush queer = 
-        (xQ <*> xT <*> (xQ <*> xQ) ** 
+        Evidence (xQ <*> xT <*> (xQ <*> xQ)) $ 
             \x => \y => \z =>   
                 let eq1 = cong (<*> y <*> z) $ queer xT (xQ <*> xQ) x
                     eq2 = cong (<*> z) $ queer xQ (xT <*> x) y
                     eq3 = cong (<*> z) $ thrush x (xQ <*> y)
                     eq4 = queer y x z
-                in trans eq1 $ trans eq2 $ trans eq3 eq4)
+                in trans eq1 $ trans eq2 $ trans eq3 eq4
     
     export
-    question46 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> (xC ** Cardinal xC)
+    0 question46 : {xT : b} -> Thrush xT -> {xQ : b} -> QueerBird xQ -> Exists(\xC => Cardinal xC)
     question46 thrush queer = 
-        (xQ <*> xQ <*> (xQ <*> xT) ** 
+        Evidence (xQ <*> xQ <*> (xQ <*> xT)) $
             \x => \y => \z =>  
                 let eq1 = cong (<*> y <*> z) $ queer xQ (xQ <*> xT) x
                     eq2 = cong (<*> z) $ queer xT (xQ <*> x) y
                     eq3 = queer x (xT <*> y) z
                     eq4 = thrush y (x <*> z)
-                in trans eq1 $ trans eq2 $ trans eq3 eq4)
+                in trans eq1 $ trans eq2 $ trans eq3 eq4
     
     public export
-    Goldfinch : b -> Type 
+    0 Goldfinch : b -> Type 
     Goldfinch xG = (x : b) -> (y : b) -> (z : b) -> (w : b) -> xG <*> x <*> y <*> z <*> w = x <*> w <*> (y <*> z)
 
     export
-    question47 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> (xG ** Goldfinch xG)
+    0 question47 : {xB : b} -> Bluebird xB -> {xC : b} -> Cardinal xC -> Exists(\xG => Goldfinch xG)
     question47 bluebird cardinal = 
-        (xB<*>xB<*>xC ** 
+        Evidence (xB<*>xB<*>xC) $
             \x => \y => \z => \w => 
                 let eq1 = cong (<*> y <*> z <*> w) $ bluebird xB xC x
                     eq2 = cong (<*> w) $ bluebird (xC <*> x) y z
                     eq3 = cardinal x (y <*> z) w
-                in trans eq1 $ trans eq2 eq3)
+                in trans eq1 $ trans eq2 eq3
     

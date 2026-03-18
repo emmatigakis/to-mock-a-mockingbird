@@ -1,5 +1,7 @@
 module ToMockAMockingbird
 
+import Data.DPair
+
 %default total 
 
 public export
@@ -17,97 +19,97 @@ data Normal : {auto b : _} -> Bird b => b -> Type where
 
 parameters {auto b : Type} {auto _ : Bird b}
     public export
-    Mockingbird : b -> Type
+    0 Mockingbird : b -> Type
     Mockingbird m = (x : b) -> m <*> x = x <*> x
 
     public export
-    Composition : b -> b -> b -> Type 
+    0 Composition : b -> b -> b -> Type 
     Composition xA xB xC = (x : b) -> xC <*> x = xA <*> (xB <*> x)
 
     public export
-    Fond : b -> b -> Type 
+    0 Fond : b -> b -> Type 
     Fond xA xB = xA <*> xB = xB 
 
     public export
-    Condition1 : Type 
-    Condition1 = (xA : b) -> (xB : b) -> (xC ** Composition xA xB xC)
+    0 Condition1 : Type 
+    Condition1 = (xA : b) -> (xB : b) -> Exists (\xC => Composition xA xB xC)
 
     public export
-    Condition2 : Type 
-    Condition2 = (m ** Mockingbird m)
+    0 Condition2 : Type 
+    Condition2 = Exists (\m => Mockingbird m)
 
     export
-    question1 : Condition1 -> Condition2 -> (x : b) -> (y ** Fond x y)
-    question1 c1 (m**mock) xA = 
-        let (xC**prf) = c1 xA m
+    0 question1 : Condition1 -> Condition2 -> (x : b) -> Exists (\y => Fond x y)
+    question1 c1 (Evidence m mock) xA = 
+        let Evidence xC prf = c1 xA m
             eq1 = prf xC
             eq2 = mock xC
-        in (m <*> xC ** sym $ trans eq2 eq1)
+        in Evidence (m <*> xC) $ sym $ trans eq2 eq1
     --A(CC) = A(MC) 
     --CC = A(MC)    -> eq1
 
     public export
-    Egocentric : b -> Type 
+    0 Egocentric : b -> Type 
     Egocentric x = x <*> x = x
 
     export
-    question2 : Condition1 -> Condition2 -> (xE ** Egocentric xE)
-    question2 c1 c2@(m**mock) = 
-        let (xE**eq1) = question1 c1 c2 m
+    0 question2 : Condition1 -> Condition2 -> Exists (\xE => Egocentric xE)
+    question2 c1 c2@(Evidence m mock) = 
+        let Evidence xE eq1 = question1 c1 c2 m
             eq2 = mock xE
-        in (xE ** trans (sym eq2) eq1)
+        in Evidence xE $ trans (sym eq2) eq1
     --ME = E    -> eq1
     --ME = EE   -> eq2
     
     public export
-    Agree : b -> b -> b -> Type 
+    0 Agree : b -> b -> b -> Type 
     Agree xA xB x = xA <*> x = xB <*> x
 
     public export
-    Agreeable : b -> Type 
-    Agreeable xA = (xB : b) -> (x ** Agree xA xB x)
+    0 Agreeable : b -> Type 
+    Agreeable xA = (xB : b) -> Exists (\x => Agree xA xB x)
 
     export
-    question3 : Condition1 -> (xA : b) -> (Agreeable xA) -> (x : b) -> (y ** Fond x y)
+    0 question3 : Condition1 -> (xA : b) -> (Agreeable xA) -> (x : b) -> Exists (\y => Fond x y)
     question3 c1 xA aggreable x = 
-        let (xH**prf) = c1 x xA
-            (y**eq1) = aggreable xH
+        let Evidence xH prf = c1 x xA
+            Evidence y eq1 = aggreable xH
             eq2 = prf y
-        in (xA <*> y ** sym $ trans eq1 eq2)
+        in Evidence (xA <*> y) $ sym $ trans eq1 eq2
     --Hy = x(Ay)    eq2
     --Ay = Hy       eq1
 
     export
-    question4 : Condition1 -> (xA : b) -> (xB : b) -> (xC : b) -> (Composition xA xB xC) -> (Agreeable xC) -> Agreeable xA
+    0 question4 : Condition1 -> (xA : b) -> (xB : b) -> (xC : b) -> (Composition xA xB xC) -> (Agreeable xC) -> Agreeable xA
     question4 c1 xA xB xC comp aggreable xD = 
-        let (xE**prf) = c1 xD xB
-            (x**eq1) = aggreable xE
+        let Evidence xE prf = c1 xD xB
+            Evidence x eq1 = aggreable xE
             eq2 = prf x
             eq3 = comp x
-        in (xB <*> x ** trans (sym eq3) $ trans eq1 eq2)
+        in Evidence (xB <*> x) $ trans (sym eq3) $ trans eq1 eq2
     --Ex = D(Bx)    eq2
     --Cx = Ex       eq1
     --Cx = A(Bx)    eq3
 
     public export
-    TripleComposition : b -> b -> b -> b -> Type 
+    0 TripleComposition : b -> b -> b -> b -> Type 
     TripleComposition xA xB xC xD = (x : b) -> xD <*> x = xA <*> (xB <*> (xC <*> x))
 
     export
-    question5 : Condition1 -> (xA : b) -> (xB : b) -> (xC : b) -> (xD ** TripleComposition xA xB xC xD)
+    0 question5 : Condition1 -> (xA : b) -> (xB : b) -> (xC : b) -> Exists (\xD => TripleComposition xA xB xC xD)
     question5 c1 xA xB xC = 
-        let (xAB**prf1) = c1 xA xB
-            (xABC**prf2) = c1 xAB xC
-        in (xABC ** \x => 
+        let Evidence xAB prf1 = c1 xA xB
+            Evidence xABC prf2 = c1 xAB xC
+        in Evidence xABC $ \x => 
             let eq1 = prf1 (xC <*> x)
                 eq2 = prf2 x
-            in trans eq2 eq1)
+            in trans eq2 eq1
         
     export
-    question6 : Condition1 -> Condition2 -> (xA : b) -> (xB : b) -> Compatible xA xB
+    0 question6 : Condition1 -> Condition2 -> (xA : b) -> (xB : b) -> Compatible xA xB
     question6 c1 c2 xA xB = 
-        let (xC**prf) = c1 xA xB
-            (y**eq1) = question1 c1 c2 xC
+        let Evidence xC prf = c1 xA xB
+            Evidence y eq1 = question1 c1 c2 xC
             eq2 = prf y
         in MkCompatible (xB <*> y) y (trans (sym eq2) eq1) Refl
     --Cy = A(By)    eq2
@@ -115,59 +117,59 @@ parameters {auto b : Type} {auto _ : Bird b}
     --x = By
 
     public export
-    Happy : b -> Type 
+    0 Happy : b -> Type 
     Happy xA = Compatible xA xA 
 
     export
-    question7 : (xA : b) -> (x : b) -> (Fond xA x) -> Happy xA
+    0 question7 : (xA : b) -> (x : b) -> (Fond xA x) -> Happy xA
     question7 xA x prf = 
         MkCompatible x x prf prf
     --Ax = x
     
     export
-    question8 : {xH : b} -> Condition1 -> Happy xH -> (xB ** Normal xB)
+    0 question8 : {xH : b} -> Condition1 -> Happy xH -> Exists (\xB => Normal xB)
     question8 c1 (MkCompatible x y eq1 eq2) = 
-        let (xB**prf) = c1 xH xH
+        let Evidence xB prf = c1 xH xH
             eq3 = prf y
-        in (xB ** IsNormal y (rewrite eq3 in rewrite eq2 in eq1))
+        in Evidence xB $ IsNormal y (rewrite eq3 in rewrite eq2 in eq1)
     --Hx = y    eq1
     --Hy = x    eq2
     --H(Hy) = y
     --By = H(Hy)    eq3 
 
     public export
-    Fixated : b -> b -> Type 
+    0 Fixated : b -> b -> Type 
     Fixated xA xB = (x : b) -> xA <*> x = xB
 
     public export
-    HopelesslyEgocentric : b -> Type 
+    0 HopelesslyEgocentric : b -> Type 
     HopelesslyEgocentric xB = Fixated xB xB
 
     public export
-    Kestrel : b -> Type  
+    0 Kestrel : b -> Type  
     Kestrel xK = (x : b) -> (y : b) -> (xK <*> x) <*> y = x
 
     export
-    question9 : Condition1 -> Condition2 -> {xK : b} -> Kestrel xK -> (xA ** HopelesslyEgocentric xA)
+    0 question9 : Condition1 -> Condition2 -> {xK : b} -> Kestrel xK -> Exists (\xA => HopelesslyEgocentric xA)
     question9 c1 c2 kestrel = 
-        let (xA**eq1) = question1 c1 c2 xK
-        in (xA ** \x => let eq2 = kestrel xA x in rewrite sym eq1 in sym $ trans eq1 $ sym eq2)
+        let Evidence xA eq1 = question1 c1 c2 xK
+        in Evidence xA $ \x => let eq2 = kestrel xA x in rewrite sym eq1 in sym $ trans eq1 $ sym eq2
     --KA = A        eq1 
     --(KA)x = Ax
     --(KA)x = A     eq2 
 
     export
-    question10 : {y : b} -> Fixated x y -> Fond x y
+    0 question10 : {y : b} -> Fixated x y -> Fond x y
     question10 f = f y
     
     export
-    question11 : {xK : b} ->  Kestrel xK -> Egocentric xK -> HopelesslyEgocentric xK
+    0 question11 : {xK : b} ->  Kestrel xK -> Egocentric xK -> HopelesslyEgocentric xK
     question11 kestrel ego z = 
         let eq1 = kestrel xK z 
         in rewrite sym ego in sym $ trans ego $ sym eq1
 
     export
-    question12 : {xK : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
+    0 question12 : {xK : b} -> Kestrel xK -> (x : b) -> Egocentric (xK <*> x) -> Fond xK x
     question12 kestrel x eq1 = 
         let eq2 = kestrel x (xK <*> x)
         in trans (sym eq1) eq2
@@ -175,19 +177,19 @@ parameters {auto b : Type} {auto _ : Bird b}
     --(Kx)(Kx) = x  eq2
 
     export
-    question13 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> xA <*> x = xA <*> y
+    0 question13 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> xA <*> x = xA <*> y
     question13 prf x y = 
         let eq1 = prf x
             eq2 = prf y
         in sym $ trans eq2 $ sym eq1
     
     export
-    question14 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> (xA <*> x) <*> y = xA
+    0 question14 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> (y : b) -> (xA <*> x) <*> y = xA
     question14 prf x y = 
         rewrite prf x in prf y
     
     export
-    question15 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> HopelesslyEgocentric (xA <*> x)
+    0 question15 : {xA : b} -> HopelesslyEgocentric xA -> (x : b) -> HopelesslyEgocentric (xA <*> x)
     question15 prf x y = 
         let eq1 = question14 prf x y
             eq2 = prf x
@@ -197,7 +199,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --(Ax)y = Ax
 
     export
-    question16 : {xK : b} -> Kestrel xK -> (x : b) -> (y : b) -> xK <*> x = xK <*> y -> x = y
+    0 question16 : {xK : b} -> Kestrel xK -> (x : b) -> (y : b) -> xK <*> x = xK <*> y -> x = y
     question16 kestrel x y eq1 = 
         let eq2 = kestrel x xK
             eq3 = kestrel y xK
@@ -208,7 +210,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --(Ky)z = y eq3 z=K
 
     export
-    question17 : {xA : b} -> Fixated xA x -> Fixated xA y -> x = y
+    0 question17 : {xA : b} -> Fixated xA x -> Fixated xA y -> x = y
     question17 prf1 prf2 = 
         let eq1 = prf1 xA
             eq2 = prf2 xA
@@ -217,12 +219,12 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Az = x
 
     export
-    question18 : {xK : b} -> Kestrel xK -> (x : b) -> Fond xK (xK <*> x) -> Fond xK x
+    0 question18 : {xK : b} -> Kestrel xK -> (x : b) -> Fond xK (xK <*> x) -> Fond xK x
     question18 kestrel x eq1 = question16 kestrel (xK <*> x) x eq1
     --K(Kx) = Kx
 
     export
-    question19 : {xK : b} -> Kestrel xK -> Egocentric xK -> (x : b) -> x = xK
+    0 question19 : {xK : b} -> Kestrel xK -> Egocentric xK -> (x : b) -> x = xK
     question19 kestrel ego x = 
         let prf = question11 kestrel ego x
         in question16 kestrel x xK $ sym $ trans ego $ sym prf
@@ -231,27 +233,27 @@ parameters {auto b : Type} {auto _ : Bird b}
         --Kx = Ky
 
     public export
-    Identity : b -> Type 
+    0 Identity : b -> Type 
     Identity xI = (x : b) -> xI <*> x = x
 
     export
-    question20 : {xI : b} -> Identity xI -> Agreeable xI -> (x : b) -> (y ** Fond x y)
+    0 question20 : {xI : b} -> Identity xI -> Agreeable xI -> (x : b) -> Exists (\y => Fond x y)
     question20 prf1 prf2 x = 
-        let (y**eq1) = prf2 x
+        let Evidence y eq1 = prf2 x
             eq2 = prf1 y
-        in (y ** trans (sym eq1) eq2)
+        in Evidence y $ trans (sym eq1) eq2
     --xy = Iy = y
 
     export
-    question21 : {xI : b} -> Identity xI -> ((x : b) -> (y ** Fond x y)) -> Agreeable xI
+    0 question21 : {xI : b} -> Identity xI -> ((x : b) -> Exists(\y => Fond x y)) -> Agreeable xI
     question21 prf1 prf2 x = 
-        let (y ** eq1) = prf2 x
+        let Evidence y eq1 = prf2 x
             eq2 = prf1 y
-        in (y ** sym $ trans eq1 $ sym eq2)
+        in Evidence y $ sym $ trans eq1 $ sym eq2
     --xy = y = Iy
 
     export
-    question22a : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> (xB : b) -> Normal xB
+    0 question22a : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> (xB : b) -> Normal xB
     question22a prf1 prf2 xB = --?tmp
         let (MkCompatible x y eq1 eq2) = prf2 xB xI 
             eq3 = prf1 y
@@ -262,12 +264,12 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Bx = x
 
     export
-    question22b : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> Agreeable xI
+    0 question22b : {xI : b} -> Identity xI -> ((x : b) -> (y : b) -> Compatible x y) -> Agreeable xI
     question22b prf1 prf2 xB =
-        question21 prf1 (\x => let IsNormal y prf3 = question22a prf1 prf2 x in (y ** prf3)) xB
+        question21 prf1 (\x => let IsNormal y prf3 = question22a prf1 prf2 x in Evidence y  prf3) xB
 
     export
-    question23 : {xI : b} -> Identity xI -> HopelesslyEgocentric xI -> (x : b) -> x = xI
+    0 question23 : {xI : b} -> Identity xI -> HopelesslyEgocentric xI -> (x : b) -> x = xI
     question23 prf1 prf2 x = 
         let eq1 = prf1 x
             eq2 = prf2 x
@@ -276,31 +278,31 @@ parameters {auto b : Type} {auto _ : Bird b}
     --Ix = x    eq1 
 
     public export
-    Lark : b -> Type 
+    0 Lark : b -> Type 
     Lark xL = (x : b) -> (y : b) -> (xL <*> x) <*> y = x <*> (y <*> y)
 
     export
-    question24 : {xL : b} -> {xI : b} -> Lark xL -> Identity xI -> (m ** Mockingbird m)
+    0 question24 : {xL : b} -> {xI : b} -> Lark xL -> Identity xI -> Exists (\m => Mockingbird m)
     question24 lark ident = 
-        (xL <*> xI ** \x => 
+        Evidence (xL <*> xI) $ \x => 
             let eq1 = ident (x <*> x)
                 eq2 = lark xI x
-            in trans eq2 eq1)
+            in trans eq2 eq1
     --(LI)x = I(xx) = xx
 
     export
-    lark_lemma : {xL : b} -> Lark xL -> (x : b) -> Fond x ((xL <*> x)<*>(xL <*> x))
+    0 lark_lemma : {xL : b} -> Lark xL -> (x : b) -> Fond x ((xL <*> x)<*>(xL <*> x))
     lark_lemma lark x = 
         sym $ lark x (xL <*> x)
         
     export
-    question25 : {xL : b} -> Lark xL -> (x : b) -> Happy x
+    0 question25 : {xL : b} -> Lark xL -> (x : b) -> Happy x
     question25 lark x = 
         question7 x ((xL <*> x)<*>(xL <*> x)) $ lark_lemma lark x
     --(Lx)(Lx) = x((Lx)(Lx))
 
     export
-    question26 : {xL : b} -> Lark xL -> HopelesslyEgocentric xL -> (x : b) -> Fond x xL
+    0 question26 : {xL : b} -> Lark xL -> HopelesslyEgocentric xL -> (x : b) -> Fond x xL
     question26 lark ego x = 
         let eq1 = question14 ego x (xL <*> x)
             eq2 = lark_lemma lark x
@@ -309,7 +311,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     --(Lx)(Lx) = L  eq1
 
     export
-    question27 : ((x : b) -> Lark x -> Kestrel x -> Void) -> {xL : b} -> Lark xL -> (xK : b) -> Fond xL xK -> Not(Kestrel xK)
+    0 question27 : ((x : b) -> Lark x -> Kestrel x -> Void) -> {xL : b} -> Lark xL -> (xK : b) -> Fond xL xK -> Not(Kestrel xK)
     question27 cond lark xK eq1 kestrel = 
         let eq2 = cong (<*> xK) eq1
             eq3 = lark xK xK
@@ -322,7 +324,7 @@ parameters {auto b : Type} {auto _ : Bird b}
         --(LK)K = K(KK) eq3
 
     export
-    question28 : {xK : b} -> Kestrel xK -> {xL : b} -> Lark xL -> Fond xK xL -> (x : b) -> Fond x xL
+    0 question28 : {xK : b} -> Kestrel xK -> {xL : b} -> Lark xL -> Fond xK xL -> (x : b) -> Fond x xL
     question28 kestrel lark fond  = 
         question26 lark (\x => rewrite sym fond 
             in let eq1 = kestrel xL x in 
@@ -330,7 +332,7 @@ parameters {auto b : Type} {auto _ : Bird b}
     
 
     export
-    question29 : {xL : b} -> Lark xL -> (xE ** Egocentric xE)
+    0 question29 : {xL : b} -> Lark xL -> Exists(\xE => Egocentric xE)
     question29 lark = 
         let eq1 = lark_lemma lark (xL <*> xL)
             --l_ll = xL <*> (xL <*> xL)
@@ -341,7 +343,7 @@ parameters {auto b : Type} {auto _ : Bird b}
             eq6 = trans (sym eq4) eq5
             eq7 = cong (<*> y) eq6 
             eq8 = lark (y <*> y) y
-        in (y<*>y ** trans (sym eq8) eq7)
+        in Evidence (y<*>y) $ trans (sym eq8) eq7
         --(LL)y = y         eq5 
         --(LL)y = L(yy)     eq4 
         --L(yy) = y         eq6 
@@ -350,7 +352,8 @@ parameters {auto b : Type} {auto _ : Bird b}
 
     %ambiguity_depth 5
     export 
-    question29b : {xL : b} -> Lark xL -> (xE ** Egocentric xE)
+    0 question29b : {xL : b} -> Lark xL -> Exists(\xE => Egocentric xE)
     question29b lark = 
-        (((xL<*>((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))))<*>(xL<*>(xL<*>xL))) ** 
-        sym (trans (trans (trans (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL))) (cong2 (<*>) (lark (xL<*>xL) (xL<*>(xL<*>xL))) (lark (xL<*>xL) (xL<*>(xL<*>xL))))) (cong2 (<*>) (lark (xL) ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))) (sym (lark (xL<*>xL) (xL<*>(xL<*>xL)))))) (sym (trans (cong2 (<*>) (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL))) (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL)))) (sym (lark (((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))<*>((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))) ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))))))))
+        Evidence 
+            ((xL<*>((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))))<*>(xL<*>(xL<*>xL))) 
+            $ sym (trans (trans (trans (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL))) (cong2 (<*>) (lark (xL<*>xL) (xL<*>(xL<*>xL))) (lark (xL<*>xL) (xL<*>(xL<*>xL))))) (cong2 (<*>) (lark (xL) ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))) (sym (lark (xL<*>xL) (xL<*>(xL<*>xL)))))) (sym (trans (cong2 (<*>) (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL))) (lark ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))) (xL<*>(xL<*>xL)))) (sym (lark (((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))<*>((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL)))) ((xL<*>(xL<*>xL))<*>(xL<*>(xL<*>xL))))))))
