@@ -9,6 +9,7 @@ import MockingbirdsWarblersAndStarlings
 
 
 parameters {auto b : Type} {auto _ : Bird b}
+    public export
     0 SageBird : b -> Type 
     SageBird theta = (x : b) -> theta <*> x = x <*> (theta <*> x)
 

@@ -53,3 +53,15 @@ parameters {auto b : Type} {auto _ : Bird b} (xP : b) (Sings : b -> Type) {sings
             in Evidence (xC <*> xP <*> x <*> y) 
                 (\prf => rewrite eq5 in rewrite eq7 in rewrite sym eq5 in prf,
                 \prf => rewrite eq5 in rewrite sym eq7 in rewrite sym eq5 in prf)
+
+    0 question3 : Law1 -> Law2 -> Law3 -> {a : b} -> ((x : b) -> (y : b) -> (z :b) -> a <*> x <*> y <*> z = x <*> (z <*> z) <*> y) -> (x : b) -> Sings x
+    question3 law1 law2 law3 prf x = 
+        question1 law1 law2 law3 law4 x
+    where 
+        law4 : (x : b) -> Exists(\y => (Sings y -> Sings $ xP <*> y <*> x, (Sings $ xP <*> y <*> x) -> Sings y))
+        law4 x = 
+            let eq1 = prf xP x ((a <*> xP) <*> x)
+            in Evidence (a <*> xP <*> x <*> (a <*> xP <*> x)) 
+                (\prf => rewrite sym eq1 in prf,
+                \prf =>  rewrite eq1 in prf)
+        
