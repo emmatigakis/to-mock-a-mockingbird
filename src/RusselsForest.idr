@@ -10,14 +10,14 @@ import AGalleryOfSageBirds
 
 %default total 
 
-parameters {auto b : Type} {auto _ : Bird b} (a : b) (Sings : b -> Type) {singsDec : Decidable 1 [b] Sings}
+parameters {auto b : Type} {auto _ : Bird b} (a : b) (Sings : b -> Type) 
     0 Law1 : Type
     Law1 = (x : b) -> ((Sings $ a <*> x) -> Sings $ x <*> x, (Sings $ x <*> x) -> Sings $ a <*> x)
 
     0 Law2 : Type 
     Law2 = (x : b) -> Exists(\x' => (y : b) -> ((Sings $ x' <*> y) -> Not(Sings $ x <*> y), Not(Sings $ x' <*> y) -> Sings $ x' <*> y))
 
-    0 question1 : Law1 -> Law2 -> Void 
+    0 question1 : Decidable 1 [b] Sings => Law1 -> Law2 -> Void 
     question1 law1 law2 = 
         let Evidence a' prf = law2 a
             (prf1,prf2) = prf a'
@@ -29,7 +29,7 @@ parameters {auto b : Type} {auto _ : Bird b} (a : b) (Sings : b -> Type) {singsD
     0 Law3 : Type 
     Law3 = Exists(\xN => (x : b) -> ((Sings $ xN <*> x) -> Not(Sings x), Not(Sings $ xN <*> x) -> (Sings x)))
 
-    0 question2 : Law3 -> {xS : b} -> SageBird xS -> Void
+    0 question2 : Decidable 1 [b] Sings => Law3 -> {xS : b} -> SageBird xS -> Void
     question2 (Evidence xN prf) sage = 
         let eq1 = sage xN
             (prf1, prf2) = prf (xS <*> xN)
