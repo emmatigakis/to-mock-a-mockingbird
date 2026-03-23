@@ -13,8 +13,7 @@ parameters {auto b : Type} {auto _ : Bird b} (e : b) (Sings : b -> Type)
     Law1 = (x : b) -> (y : b) -> (Sings $ e <*> x <*> y) -> Sings y
 
     0 Law2 : Type 
-    Law2 = (x : b) -> (y : b) -> Either (Not $ Sings x) (Not $ Sings $ e <*> x <*> y)
-    -- Law2 = (x : b) -> (y : b) -> (Sings x) -> (Sings $ e <*> x <*> y) -> Void
+    Law2 = (x : b) -> (y : b) -> (Sings x) -> (Sings $ e <*> x <*> y) -> Void
 
     0 Law3 : Type 
     Law3 = (x : b) -> (y : b) -> Not(Sings x) -> (Sings y) -> Sings $ e <*> x <*> y
@@ -37,9 +36,7 @@ parameters {auto b : Type} {auto _ : Bird b} (e : b) (Sings : b -> Type)
     
     Law2' : Law1 -> Law2 -> Law3 -> Law4 -> SingingBirds.Law2 {b=b} e Silent
     Law2' law1 law2 law3 law4 x y prf1 prf2 = 
-        case law2 x y of 
-            (Left prf3) => prf1 prf3
-            (Right prf3) => prf3 prf2
+        prf1 (\prf3 => law2 x y prf3 prf2)
     
     Law3' : Law1 -> Law2 -> Law3 -> Law4 -> SingingBirds.Law3 {b=b} e Silent
     Law3' law1 law2 law3 law4 x y prf1 prf2 prf3 = 
