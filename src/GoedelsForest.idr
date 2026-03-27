@@ -36,7 +36,7 @@ parameters {auto b : Type} {auto _ : Bird b} (xN : b) (Sings : b -> Type) (IsNig
         Condition4a -> Condition4b -> 
         Exists(\x => (Sings x, Not(IsNightingale x)))
     question1 condition1 condition2a condition2b condition3a condition3b condition4a condition4b = 
-        let (xA ** eq) = the (xA ** xA = (assosiate $ mate xN)) _
+        let (xA ** eq) = the (xA ** xA = (assosiate $ mate xN)) ((assosiate $ mate xN) ** Refl)
             prf1 = lemma1 eq xA
             prf2 = lemma2 eq xA
         in Evidence (xA<*>xA) 
@@ -62,7 +62,7 @@ parameters {auto b : Type} {auto _ : Bird b} (xN : b) (Sings : b -> Type) (IsNig
         Condition4a -> Condition4b -> 
         Exists(\x => (Sings x, Not(IsNightingale x)))
     question2 condition1 condition2a condition2b condition3a condition3b condition4a condition4b = 
-        let (xA1 ** eq) = the (xA1 ** xA1 = (mate $ assosiate xN)) _
+        let (xA1 ** eq) = the (xA1 ** xA1 = (mate $ assosiate xN)) ((mate $ assosiate xN) ** Refl)
             prf1 = lemma1 eq xA1
             prf2 = lemma2 eq xA1
         in Evidence (xA1<*>xA1) 
@@ -101,4 +101,3 @@ parameters {auto b : Type} {auto _ : Bird b} (xN : b) (Sings : b -> Type) (IsNig
             (Right (Evidence y (prf3, prf4))) => 
                 let (prf1, prf2) = prf y
                 in prf3 $ condition2b  _ _ $ prf4 . prf1
-    
